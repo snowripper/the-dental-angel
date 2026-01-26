@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+# Change to the app directory
+cd "$(dirname "$0")/.."
+
+# Run type checking
+echo "Running type check..."
+npm run typecheck || {
+  echo "Type check failed. Please fix type errors before committing."
+  exit 1
+}
+
+# Run lint-staged (handles linting and formatting for staged files)
+npx lint-staged || {
+  echo "Lint-staged failed. Please fix linting errors before committing."
+  exit 1
+}
+
+# Check for secrets using gitleaks (if installed)
+if command -v gitleaks &> /dev/null; then
+  echo "Scanning for secrets..."
+  gitleaks protect --staged --no-banner || {
+    echo "Secrets detected! Please remove them before committing."
+    exit 1
+  }
+fi
+
+echo "All pre-commit checks passed!"

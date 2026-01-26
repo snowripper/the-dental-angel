@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "The Dental Angel",
+    "slug": "the-dental-angel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#E8F4FC"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dentalangel.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "The Dental Angel needs camera access so you can take photos of your treatment plans for educational explanations.",
+        "NSPhotoLibraryUsageDescription": "The Dental Angel needs photo library access so you can upload images of your treatment plans for educational explanations.",
+        "NSPhotoLibraryAddUsageDescription": "The Dental Angel can save images to help you keep track of your dental information."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#E8F4FC"
+      },
+      "package": "com.dentalangel.app",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES"
+      ],
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "The Dental Angel needs camera access so you can take photos of your treatment plans for educational explanations."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The Dental Angel needs photo library access so you can upload images of your treatment plans for educational explanations."
+        }
+      ],
+      "expo-font"
+    ]
+  }
+}

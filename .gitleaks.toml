@@ -1,0 +1,51 @@
+# Gitleaks configuration for The Dental Angel
+# This file configures secret detection for the project
+
+title = "Dental Angel Gitleaks Config"
+
+[extend]
+# Use the default gitleaks rules as a base
+useDefault = true
+
+# Paths to ignore (files that should not be scanned)
+[allowlist]
+paths = [
+  '''node_modules''',
+  '''\.env\.example$''',
+  '''package-lock\.json$''',
+  '''yarn\.lock$''',
+  '''\.expo''',
+  '''dist''',
+  '''web-build''',
+  '''ios''',
+  '''android''',
+]
+
+# Additional rules for common patterns we want to catch
+[[rules]]
+id = "openai-api-key"
+description = "OpenAI API Key"
+regex = '''sk-[a-zA-Z0-9]{20,}'''
+tags = ["api", "openai"]
+
+[[rules]]
+id = "expo-public-key"
+description = "Expo Public Key with hardcoded value"
+regex = '''EXPO_PUBLIC_[A-Z_]+=.{10,}'''
+path = '''\.tsx?$'''
+tags = ["expo", "env"]
+
+[[rules]]
+id = "supabase-key"
+description = "Supabase Key"
+regex = '''eyJ[a-zA-Z0-9_-]{10,}\.eyJ[a-zA-Z0-9_-]{10,}'''
+tags = ["api", "supabase", "jwt"]
+
+# Allow example/placeholder values
+[allowlist.regexes]
+  allow = [
+    '''your-.*-here''',
+    '''REPLACE_ME''',
+    '''placeholder''',
+    '''example\.com''',
+  ]
