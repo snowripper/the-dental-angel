@@ -11,7 +11,6 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, fontSize, borderRadius, shadows } from '../constants/theme';
@@ -81,9 +80,10 @@ export default function SignUpScreen({ navigation }: SignUpScreenProps) {
         setStatusMessage('Account may have been created. Try logging in.');
         setTimeout(() => navigation.navigate('Login'), 2000);
       }
-    } catch (err: any) {
-      console.log('Signup error:', err);
-      setError(err.message || 'Something went wrong. Please try again.');
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setError(errorMessage);
       setStatusMessage('');
     } finally {
       setIsLoading(false);

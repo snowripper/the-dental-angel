@@ -30,7 +30,6 @@ Now retired, he wants to help patients worldwide understand their dental treatme
 - Full authority over all technical choices: languages, frameworks, architecture, libraries, hosting, file structure
 - Choose boring, reliable, well-supported technologies
 - Optimize for maintainability and simplicity
-- Document technical decisions in TECHNICAL.md (for future developers, not the user)
 
 ## When to Ask the User
 
@@ -40,73 +39,17 @@ Only for things that affect their experience. Frame it like:
 
 Never ask about: databases, APIs, frameworks, libraries, file organization, implementation details
 
-## Engineering Standards (Apply Automatically)
-
-- Clean, maintainable code
-- Automated testing (unit, integration, e2e as appropriate)
-- Self-verification — the system checks itself
-- Friendly, non-technical error messages
-- Input validation and security best practices
-- Clear commit messages
-- Dev/production environment separation
-
-## Before Completing Any Task (Security Checklist)
-
-Run these checks before marking work complete:
-
-1. **Secrets Check**: Scan for hardcoded API keys, passwords, tokens, or credentials
-2. **Injection Check**: Verify no SQL, shell, or path traversal vulnerabilities
-3. **Input Validation**: Ensure all user inputs are validated and sanitized
-4. **Type Safety**: Run `npm run typecheck` — no type errors allowed
-5. **Linting**: Run `npm run lint` — no security warnings allowed
-6. **Tests**: Run `npm test` — all tests must pass
-
-**Quick command:** `cd the-dental-angel && npm run typecheck && npm run lint && npm test`
-
-## Quality Assurance
-
-- Test everything before showing the user
-- Never show something broken
-- Fix problems — don't explain technical issues
-- Everything demonstrated should work
-
-## Showing Progress
-
-- Working demos he can click around and try (preferred)
-- Screenshots or recordings when demos aren't practical
-- Describe changes in terms of his experience
-- Celebrate milestones in terms he cares about ("Patients can now upload their treatment plan and get an explanation" not "Implemented OCR and GPT integration")
-
 ---
 
 ## This Project: The Dental Angel
 
-### What It Is
-
-A mobile app that helps patients understand their dental treatment plans. When a patient receives a treatment plan they're unsure about, they can open the app and get clear, friendly explanations — powered by Dr. [Name]'s 40 years of dental expertise.
-
-### The Problem It Solves
-
-Patients often:
-- Don't understand their treatment plan
-- Feel they don't need certain treatments
-- Wonder if they're being oversold
-- Don't trust what the dentist says
-
-They leave the office confused and uncertain, unsure whether to proceed.
-
-### The Solution
-
-A warm, friendly AI "dental angel" that:
-- Explains procedures in plain language
-- Helps patients understand why treatments might be recommended
-- Suggests good questions to ask their dentist
-- Empowers informed decision-making
-- Available 24/7 in any language
+A mobile app that helps patients understand their dental treatment plans. When a patient receives a treatment plan they're unsure about, they can open the app and get clear, friendly explanations — powered by Dr. Angel's 40 years of dental expertise.
 
 ### CRITICAL: Legal Positioning
 
 **This is EDUCATION, not dental advice.**
+
+**Note:** Malpractice insurance for teledentistry second opinions was not obtainable (confirmed Feb 2026). The app is 100% educational.
 
 The app must ALWAYS:
 - Position itself as educational only
@@ -118,218 +61,285 @@ The app must ALWAYS:
 
 **The tone:** "I can't tell you what to do since I haven't examined you, but here's what I'd want to know if I were in your shoes..."
 
-This careful positioning protects against regulatory challenges from dental boards.
-
 ### Target Users
 
 - Patients anywhere in the world who receive dental treatment plans
 - People who want to understand before making decisions
-- May include older users who aren't tech-savvy — simplicity is essential
+- May include older users (45-65+) who aren't tech-savvy — simplicity is essential
 
 ### Look and Feel
 
-**Colors:**
-- Soft, light, muted shades of blue (calming, like a dental office should feel)
-- Clean and uncluttered
-
-**Personality:**
-- Warm and approachable (most important)
-- Trustworthy and professional
-- Friendly, like talking to a knowledgeable friend
-- Uses appropriate humor to put people at ease
-- Human touch always present — never feels robotic
-
-**Usability:**
-- Super simple — even someone who struggles with apps should find it easy
-- Clear, large text
-- Obvious what to do next
-- Minimal steps to get help
-
-### Core Features (Must-Have)
-
-1. **Conversational AI** — Patients can describe their situation or ask questions in plain language
-2. **Treatment Plan Upload** — Take a photo or upload a treatment plan document
-3. **Plain-Language Explanations** — Break down dental terminology and procedures
-4. **Questions to Ask** — Suggest what to discuss with their dentist
-5. **Multi-Language Support** — Works in any language automatically
-6. **Mobile App** — Available on phones (iOS and Android)
-
-### Nice-to-Have (Later)
-
-- Save conversation history
-- Share explanations with family members
-- Common procedure library/glossary
-- Cost transparency information
-- Find a dentist feature
-
-### The Personality (Voice of the AI)
-
-The AI speaks like The Dental Angel — warm, friendly, conversational, with occasional gentle humor. It's like having a retired dentist uncle who you can call anytime.
-
-Example response style:
-"Ah, a crown on tooth #14! Let me help you understand what's going on there. A crown is basically a cap that covers and protects a tooth that's been damaged or weakened. Think of it like a helmet for your tooth. Now, there are several reasons your dentist might recommend one — let me walk you through the most common ones, and then I'll give you some great questions to ask at your next visit..."
-
-### Success Metrics
-
-- Number of patients helped
-- User satisfaction/reviews
-- Revenue generated
-- International reach
-- Zero regulatory issues
-
-### Timeline
-
-No rush. Get it right. Quality over speed.
-
----
-
-## Technical Decisions (For Reference)
-
-See TECHNICAL.md for implementation details. The user does not need to be consulted on technical architecture.
-
-Key constraints that drive technical decisions:
-- Must be a mobile app (iOS and Android)
-- Must handle image uploads (treatment plan photos)
-- Must support real-time AI conversation
-- Must support multiple languages
-- Must be extremely simple to use
-- Must scale internationally
-- Must be reliable and secure (health-adjacent data)
-
----
-
-## Essential Skills for The Dental Angel
-
-**IMPORTANT: At the start of each major building or brainstorming step, load the relevant skills listed below.**
-
-### Core Development Skills (Always Relevant)
-
-| Skill | Purpose | When to Load |
-|-------|---------|--------------|
-| **react-native-specialist** | Mobile app development with React Native/Expo | Any UI work, screen building, navigation, mobile-specific features |
-| **ai-integration** | Connecting to AI services (OpenAI/Claude) | AI chat functionality, prompt engineering, response handling |
-| **llm-architect** | Designing AI personality and conversation flow | Refining The Dental Angel's responses, conversation design |
-
-### Feature-Specific Skills
-
-| Skill | Purpose | When to Load |
-|-------|---------|--------------|
-| **auth-specialist** | User accounts and login systems | Setting up patient accounts, saving conversations |
-| **stripe-integration** | Payment processing | Implementing subscriptions, payment tiers |
-| **growth-strategy** | Marketing and user acquisition | Launch planning, user acquisition strategy |
-
-### Future Skills (Load When Needed)
-
-| Skill | Purpose | When to Load |
-|-------|---------|--------------|
-| **landing-page-design** | Marketing website | Building the promotional website |
-| **ux-design** | User experience refinement | Polish phase, improving user flows |
-| **pricing-strategy** | Monetization planning | Designing subscription tiers |
-| **app-store-optimization** | App store listings | Preparing for iOS/Android launch |
-| **analytics-integration** | Tracking success metrics | After launch, measuring impact |
-| **localization** | Multi-language support | International expansion |
-| **image-processing** | Treatment plan photo analysis | Enhancing photo upload feature |
-
-### Skills by Development Phase
-
-**Phase 1: Foundation (Current)**
-- react-native-specialist
-- ai-integration
-- llm-architect
-
-**Phase 2: Full AI Connection**
-- ai-integration
-- llm-architect
-- react-native-specialist
-
-**Phase 3: User Accounts**
-- auth-specialist
-- react-native-specialist
-
-**Phase 4: Monetization**
-- stripe-integration
-- pricing-strategy
-
-**Phase 5: Launch Preparation**
-- landing-page-design
-- growth-strategy
-- app-store-optimization
-
-**Phase 6: Polish & Scale**
-- ux-design
-- analytics-integration
-- localization
-
----
-
-## Skills Tracking Log
-
-### Currently Loaded Skills
-- react-native-specialist
-- llm-architect
-- ai-integration
-- auth-specialist
-- stripe-integration
-- growth-strategy
-
-### Skills Added History
-| Date | Skill Added | Reason |
-|------|-------------|--------|
-| Session 1 | react-native-specialist | Core mobile development |
-| Session 1 | llm-architect | AI personality design |
-| Session 1 | ai-integration | Chat functionality |
-| Session 1 | auth-specialist | Future user accounts |
-| Session 1 | stripe-integration | Future payments |
-| Session 1 | growth-strategy | Launch planning |
+- **Colors:** Soft, light, muted shades of blue (calming)
+- **Personality:** Warm, approachable, trustworthy, friendly, human touch
+- **Usability:** Super simple, clear large text, obvious next steps
 
 ---
 
 ## Memory Commitments
 
 **ALWAYS REMEMBER:**
-1. At each new major building step, check this Skills section and load relevant skills
-2. Update the Skills Tracking Log when new skills are added
-3. The user is a non-technical retired dentist — never use jargon
-4. Legal positioning is CRITICAL — education only, never dental advice
-5. The AI personality should discuss treatment alternatives while never telling patients what to do
-6. Simplicity is essential — users may not be tech-savvy
-7. Warm, friendly, human touch in everything
+1. The user is a non-technical retired dentist — never use jargon
+2. Legal positioning is CRITICAL — **100% educational, no second opinions**
+3. The AI personality should discuss treatment alternatives while never telling patients what to do
+4. Simplicity is essential — users may not be tech-savvy (45-65+ years old)
+5. Warm, friendly, human touch in everything
+6. Accessibility: 14px minimum text, 44px minimum touch targets
+7. **Persona is "Dr. Angel"** — never use real name, ties into app branding
+8. **Malpractice insurance for teledentistry not obtainable** — stay educational only
 
 ---
 
-## Current Status & Decisions
+## Current Status
 
-### Landing Page: SHELVED
-The landing page (`landing-page/` folder) is on hold. Full focus is on the mobile app.
+### ALL FEATURES COMPLETE
 
-### Authentication: Simplified (No Account Required)
-- Users tap "Get Started" and use the app immediately
-- No email/password, no sign-up required
-- Conversations saved locally on the phone
-- Future: Add "Sign in with Apple/Google" when ready for cloud backup
+**App Structure (6 Tabs):**
+1. **Home** - AI Chat with The Dental Angel
+2. **Plans** - Treatment plan viewer with Second Opinion Score + Decision Trees
+3. **Translate** - Dental Dialect Translator
+4. **Videos** - Dr. Angel Video Library (26 topics)
+5. **Buddies** - Treatment Buddies Network (patient stories)
+6. **Settings** - App settings and preferences
 
-### What's Working Now
-- Welcome screen → Home screen flow
-- Chat with AI (OpenAI GPT-4o connected)
+**What's Working:**
+- AI Chat (OpenAI GPT-4o connected)
 - Treatment plan photo upload and analysis
-- Conversation history (saved locally)
-- AI personality with legal safeguards
-- All tests passing
-- TypeScript type checking clean
-- EAS Build configured for app store deployment
-- Camera and photo permissions configured for iOS/Android
+- Second Opinion Score, Dental Translator, Video Library
+- Decision Trees (Crown, Root Canal, Extraction)
+- Treatment Buddies (17 patient stories)
+- Family sharing, conversation history
+- State selection with location-aware pricing
+- Pricing tiers UI with CA/non-CA Expert options
+- **Expert Review flow ($149 tier)** (NEW Feb 6)
+- **Competitive messaging on App Store & landing page** (NEW Feb 6)
+- **Welcome card — asks for name + zip code on first use** (NEW Feb 7)
+- **Personalized greetings — "What's on your mind, Susan?"** (NEW Feb 7)
+- **Zip code-based dental fee reference — 30+ procedures, regional pricing** (NEW Feb 7)
+- **International patient fee guidance — works for patients worldwide** (NEW Feb 7)
+- **Plain-English treatment scores — "Very Common" instead of "91/100"** (NEW Feb 7)
+- **Upgrade banner on chat screen — gentle "Free Preview → Unlock Full Access"** (NEW Feb 7)
+- All tests passing, TypeScript clean
 
-### Ready for Testing
-The app is ready to test on real phones! See `the-dental-angel/TESTING_GUIDE.md` for step-by-step instructions.
+### ALL 8 AGENT REVIEWS COMPLETE
 
-### Next Steps
-1. **Test on real phones** - Use Expo Go to test all features
-2. **Fix any issues found** - Polish based on real device testing
-3. **Build preview apps** - Create installable APK/IPA files
-4. **App store submission** - Submit to Apple App Store and Google Play
+| Agent | Rating | Verdict |
+|-------|--------|---------|
+| fullstack-developer | Excellent | Ready for launch |
+| ui-ux-designer | Solid | Accessibility fixes applied |
+| database-architect | Excellent | Data storage validated |
+| typescript-pro | 8.5/10 | Navigation types added |
+| architect-reviewer | 7.5/10 | App.tsx split, error boundaries added |
+| mobile-developer | 8.5/10 | Polish fixes applied |
+| debugger | 8.5/10 | No critical bugs |
+| code-reviewer | Good | Issues fixed |
 
-### Upcoming Features (After Testing)
-1. Second Opinion Score - Confidence rating for treatments
-2. Enhanced "Questions to Ask" - Copyable/shareable question lists
-3. Premium tier with Stripe - $9.99/month for unlimited usage
-4. Family Sharing - Share explanations via text/email/WhatsApp
+See `docs/AGENT_REVIEW_SUMMARIES.md` for full details.
+
+---
+
+## NEXT ACTIONS
+
+**BUSINESS FORMATION (in progress Feb 7, 2026):**
+1. **EIN** — Done
+2. **California LLC** — Applied, waiting for state approval
+3. **Open business checking account** — After LLC is approved
+4. **Apple Developer ($99/year)** — Apply as Company/Organization after LLC approved. Will need D-U-N-S number (free, Apple walks you through it).
+5. **Google Play Developer ($25 one-time)** — Apply anytime
+
+**AFTER BUSINESS ACCOUNT + DEVELOPER ACCOUNTS READY:**
+6. **Set up Stripe**
+   - Connect to business bank account
+   - Configure for one-time payments
+
+7. **Connect Payment System in App**
+   - Replace simulated purchases in paymentService.ts with real Stripe/IAP
+   - See `the-dental-angel/MONETIZATION_STRATEGY.md`
+
+8. **Connect Expert Review Email System**
+   - Fix Supabase connection (project may need to be unpaused)
+   - Create expert_reviews table in Supabase
+   - Set up email API (SendGrid/Resend) to send notifications to dentalangel@mail.com
+   - Connect dr-angel-review dashboard to Supabase for real review storage
+   - Wire up push notifications for patients when review is ready
+
+9. **Submit to App Stores**
+
+---
+
+## Monetization Strategy
+
+**Document:** `the-dental-angel/MONETIZATION_STRATEGY.md`
+
+| Tier | Price | What's Included |
+|------|-------|-----------------|
+| **Free Preview** | $0 | Sample conversations, video library |
+| **Quick Answers** | $29 | AI chat, treatment plan analysis (7 days) |
+| **Full Prep** ⭐ | $49 | Above + cost comparison + PDF + red flags (14 days) |
+| **Expert Review** | $149 | Above + Dr. Angel's personal educational review (14 days) |
+
+**All tiers are educational.** No licensed second opinions (malpractice insurance not obtainable for teledentistry).
+
+---
+
+## Key Insights (Valuable Learnings)
+
+### Legal/Business Insights (Feb 3, 2026)
+| Insight | What It Means |
+|---------|---------------|
+| **Teledentistry malpractice insurance not obtainable** | Cannot offer licensed second opinions — app is 100% educational |
+| **Education can be provided anywhere** | No licensing restrictions for educational content |
+| **One Expert tier for everyone** | $149 Expert Review is educational, available worldwide |
+| **Simpler is better** | Single pricing structure, no location-based complexity |
+| **LLC before payments** | Form "The Dental Angel LLC" → EIN → Business bank account → Stripe |
+
+### Competitor Review Research (Feb 6, 2026)
+Researched actual user reviews of competitor apps. Key findings:
+
+| Competitor | User Complaints | Our Advantage |
+|------------|----------------|---------------|
+| **Toothpic** | "Didn't read what I wrote," generic "brush and floss" advice, no follow-ups, called it a "scam" | Real conversation, reads their situation, follow-up questions |
+| **Dentulu** | Broken technology, no customer support, random impersonal dentists | One trusted persona (Dr. Angel), reliable, warm |
+| **DentiCalc** | Outdated design, aggressive subscription popups, built for dentists not patients | Clean simple UI, transparent pricing, built for patients |
+| **Dental AI Chatbots** | "I don't understand" responses, rigid scripts, lose context | Natural conversation, remembers context, no scripts |
+
+This research was used to update:
+- App Store description (`the-dental-angel/APP_STORE_CONTENT.md`)
+- Landing page (`landing-page/index.html`) — new "Sound Familiar?" section, updated hero/features/FAQs
+- Competitive positioning throughout all marketing copy
+
+### Expert Review Flow (Feb 6, 2026)
+| Decision | Details |
+|----------|---------|
+| **Dr. Angel's email** | dentalangel@mail.com |
+| **Response time promise** | 24 hours (covers international time zones) |
+| **Dr. Angel's workflow** | Check email morning + evening, ~15-20 min each |
+| **Patient experience** | AI helps immediately, Dr. Angel's review is bonus layer on top |
+| **Review dashboard** | `the-dental-angel/dr-angel-review/index.html` |
+
+### Competitive Landscape
+| Competitor | What They Do | Our Advantage |
+|------------|--------------|---------------|
+| Dentulu | Teledentistry platform, random dentists | Personal expertise, education focus |
+| Toothapps | Dental records access | Treatment understanding, not just records |
+| Chapter2Dental | 3D animations for dentists | Direct to patients, AI-powered |
+
+### Persona Decision
+- **Dr. Angel** chosen as persona name
+- Ties into "The Dental Angel" branding
+- Provides anonymity while maintaining personal connection
+- Warm, approachable, trustworthy
+
+### UX/Personalization Insights (Feb 7, 2026)
+| Insight | What It Means |
+|---------|---------------|
+| **Asking for first name makes it personal** | Welcome card collects name + zip before chat starts. "What's on your mind, Susan?" feels human, not robotic |
+| **Zip code enables real fee guidance** | 30+ common procedures with regional pricing. AI says "In the LA area, a root canal typically runs $1,260–$2,660" instead of vague national averages |
+| **Scores need plain English, not numbers** | Patients don't understand "91/100". Changed to "Very Common — Most dentists would recommend this" |
+| **Pricing shouldn't hide in Settings** | Patients won't look in Settings to buy. Added gentle upgrade banner on the chat screen where they're already engaged |
+| **International patients need fee help too** | Can't give specific numbers outside US, but AI gives universal advice: get a comparison quote, ask what's included, check dental association guidelines |
+| **App Store: apply as Company/Organization** | Use LLC (not sole proprietor). Need D-U-N-S number. Apply after LLC is approved for clean setup |
+| **Supabase project may be paused** | Free tier pauses after inactivity. Will need to unpause before connecting Expert Review email system |
+
+### Dental Fee Reference (Feb 7, 2026)
+| Detail | Info |
+|--------|------|
+| **Data source** | Public ADA survey data + FAIR Health benchmarks |
+| **Coverage** | 30+ common procedures (cleanings through implants) |
+| **Regions** | 16 US regions mapped by zip code prefix (first 3 digits) |
+| **Multiplier range** | 0.85x (Midwest) to 1.45x (Hawaii) vs. national average |
+| **International** | No specific fees — AI gives universal comparison-shopping guidance |
+| **File** | `src/constants/dentalFees.ts` |
+
+---
+
+## Code Status
+
+- TypeScript: Clean
+- Tests: All 9 passing
+- Lint: 0 errors
+- Accessibility: 14px+ text, 44px+ touch targets
+- Architecture: App.tsx split, error boundaries added
+- Mobile UX: Keyboard dismiss, offline banner, optimized images
+- **State selection & pricing UI** (added Feb 3)
+- **Welcome card, personalized greetings, zip-based fee data, upgrade banner** (added Feb 7)
+
+**Quick check:** `cd the-dental-angel && npm run typecheck && npm run lint && npm test`
+
+### New Files (Feb 3, 2026)
+- `src/services/userSettingsService.ts` - User location/state storage, pricing tier definitions
+
+### New/Modified Files (Feb 7, 2026)
+- `src/constants/dentalFees.ts` - Regional dental fee reference (30+ procedures, 16 US regions)
+- `src/constants/angelPersonality.ts` - Added `getPersonalizedGreeting()` for name-based greetings
+- `src/services/aiService.ts` - Patient context (name, zip, fees), international guidance
+- `src/services/userSettingsService.ts` - Added `firstName`, `zipCode` fields + setters
+- `src/screens/ChatScreen.tsx` - Welcome card, upgrade banner, personalized flow
+- `src/screens/SettingsScreen.tsx` - Zip code input in Location section
+- `src/screens/PlansScreen.tsx` - Plain-English scores instead of numbers
+- `src/components/SecondOpinionScore.tsx` - "Very Common" labels instead of "/100"
+- `src/components/TreatmentPlanCard.tsx` - "How common is this?" with plain-English answers
+
+---
+
+## Available Agent Templates
+
+| Agent | Use For |
+|-------|---------|
+| `code-reviewer` | Review code for issues, bugs, best practices |
+| `fullstack-developer` | General full-stack development tasks |
+| `ui-ux-designer` | User interface and experience design |
+| `debugger` | Track down and fix bugs |
+| `database-architect` | Database design and optimization |
+| `typescript-pro` | TypeScript-specific development |
+| `architect-review` | Review overall architecture decisions |
+| `mobile-developer` | React Native / mobile app development |
+
+---
+
+## Key Technical Standards
+
+### Theme System
+All colors centralized in `src/constants/theme.ts`. Use `import { COLORS } from '../constants/theme'`.
+
+### Accessibility
+- Minimum text: 14px
+- Minimum touch target: 44x44px
+- Use `neutral500` or darker for body text
+
+### TypeScript
+- All screens use typed props from `src/types/navigation.ts`
+- Use `DisplayMessage` type for chat messages
+- Cross-navigator: `navigation.navigate('Home', { screen: 'History' })`
+
+### Data Storage
+Local-first (AsyncStorage). Supabase installed for future cloud backup.
+
+---
+
+## Reference Documentation
+
+For detailed guidance, see these docs:
+
+| Document | What's In It |
+|----------|--------------|
+| `docs/SESSION_HISTORY.md` | Past sessions, files added, skills log |
+| `docs/AGENT_REVIEW_SUMMARIES.md` | Full details from all 8 reviews |
+| `docs/DESIGN_INSIGHTS.md` | UI/UX principles for older users |
+| `docs/ARCHITECTURE_INSIGHTS.md` | File organization, error boundaries |
+| `docs/TYPESCRIPT_GUIDE.md` | Navigation types, patterns |
+| `docs/MOBILE_DEVELOPMENT_GUIDE.md` | iOS/Android patterns, checklists |
+| `docs/DATA_ARCHITECTURE.md` | Local storage rationale, scaling path |
+| `docs/DEBUGGING_GUIDE.md` | Bug patterns, cleanup checklist |
+
+---
+
+## Essential Skills
+
+| Skill | When to Load |
+|-------|--------------|
+| **react-native-specialist** | UI work, screens, navigation |
+| **ai-integration** | AI chat, prompt engineering |
+| **llm-architect** | AI personality, conversation design |
+| **auth-specialist** | User accounts (future) |
+| **stripe-integration** | Payments (next phase) |
+| **growth-strategy** | Launch planning |

@@ -1,5 +1,5 @@
 /**
- * Dr. [Name]'s Personal Knowledge Base
+ * Dr. Angel's Personal Knowledge Base
  *
  * This file contains the dentist's specific expertise, opinions, analogies,
  * and approach that makes The Dental Angel uniquely helpful.
@@ -15,8 +15,8 @@
 // ============================================================
 
 export const DENTIST_PROFILE = {
-  // What name should appear? (e.g., "Dr. Smith", "Dr. Mike", just first name?)
-  displayName: 'The Dental Angel',
+  // What name should appear?
+  displayName: 'Dr. Angel',
 
   // Your practice philosophy in one sentence
   philosophy: 'One patient at a time, ensuring each person has the best possible experience.',

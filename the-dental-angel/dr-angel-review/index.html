@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Angel — Expert Review Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3B82F6;
+            --primary-dark: #2563EB;
+            --primary-light: #EFF6FF;
+            --purple: #8B5CF6;
+            --purple-light: #F5F3FF;
+            --success: #22C55E;
+            --success-light: #DCFCE7;
+            --warning: #F59E0B;
+            --warning-light: #FEF3C7;
+            --neutral-50: #FAFAF9;
+            --neutral-200: #E7E5E4;
+            --neutral-500: #78716C;
+            --neutral-700: #44403C;
+            --neutral-800: #292524;
+            --white: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--neutral-50);
+            color: var(--neutral-700);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 20px 24px;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--neutral-800);
+        }
+
+        .logo-icon { font-size: 28px; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: #92400E;
+        }
+
+        .badge-completed {
+            background: var(--success-light);
+            color: #166534;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--neutral-200);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--neutral-800);
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--neutral-500);
+            margin-top: 4px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--neutral-500);
+            margin-bottom: 8px;
+        }
+
+        .patient-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--neutral-700);
+            background: var(--neutral-50);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+        }
+
+        .response-area {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px;
+            border: 2px solid var(--neutral-200);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--neutral-700);
+            resize: vertical;
+        }
+
+        .response-area:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+
+        .response-help {
+            font-size: 14px;
+            color: var(--neutral-500);
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--purple);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #7C3AED;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #C4B5FD;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neutral-50);
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--warning-light);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .timer-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #92400E;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .success-message.visible {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--neutral-800);
+            margin-bottom: 8px;
+        }
+
+        .success-text {
+            font-size: 16px;
+            color: var(--neutral-500);
+        }
+
+        .disclaimer {
+            font-size: 13px;
+            color: var(--neutral-500);
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid var(--neutral-200);
+            margin-top: 24px;
+        }
+
+        /* Demo mode styles */
+        .demo-banner {
+            background: var(--primary-light);
+            border: 1px solid #BFDBFE;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .demo-banner-text {
+            font-size: 14px;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .card { padding: 16px; }
+            .actions { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🦷</span>
+                <span>Dr. Angel Review Dashboard</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Demo banner -->
+        <div class="demo-banner">
+            <p class="demo-banner-text">
+                This is a preview of your review dashboard. When the app is live,
+                you'll receive an email with a link to this page for each review request.
+            </p>
+        </div>
+
+        <!-- Review form -->
+        <div id="review-form">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Expert Review Request</div>
+                        <div class="card-subtitle">Review #DEMO-001 — Submitted just now</div>
+                    </div>
+                    <span class="badge badge-pending">⏳ Awaiting Your Review</span>
+                </div>
+
+                <div class="timer">
+                    <span>⏰</span>
+                    <span class="timer-text">Please respond within 24 hours</span>
+                </div>
+
+                <div class="section-label">Patient's Questions</div>
+                <div class="patient-text">My dentist says I need a crown on tooth #14 and possibly a root canal. The total estimate is about $2,700. I'm not sure if I really need both procedures or if there are alternatives. I'm also concerned about the cost — is this a normal price range?</div>
+
+                <div class="section-label">AI Conversation Summary</div>
+                <div class="patient-text">The AI explained what crowns and root canals are, provided Dr. Angel's analogies about "protective helmets" and "saving the house from termites." The patient received a Second Opinion Score of 6 (Situational) for the crown and 9 (Very Common) for the root canal. Questions to ask the dentist were suggested.</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 16px;">Your Educational Review</div>
+
+                <textarea
+                    class="response-area"
+                    id="response-text"
+                    placeholder="Type your educational review here...
+
+Example:
+Thank you for sharing your treatment plan. Here are my thoughts based on my experience...
+
+Remember: Keep it educational. Don't diagnose or tell the patient what to do. Instead, help them understand their options and know what to ask their dentist."
+                ></textarea>
+
+                <p class="response-help">
+                    <strong>Tips:</strong> Write like you're talking to a friend. Use your experience
+                    ("In my 40 years..."). Suggest questions to ask their dentist. Keep it warm and reassuring.
+                    Remember — educational only, no specific recommendations.
+                </p>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="submit-btn" onclick="submitReview()">
+                        ✉️ Submit Review
+                    </button>
+                    <button class="btn btn-secondary" onclick="saveDraft()">
+                        💾 Save Draft
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success message (hidden until submit) -->
+        <div class="success-message" id="success-message">
+            <div class="success-icon">✅</div>
+            <div class="success-title">Review Submitted!</div>
+            <p class="success-text">
+                The patient will be notified that your review is ready.
+                You can close this page now.
+            </p>
+        </div>
+
+        <div class="disclaimer">
+            <strong>The Dental Angel — Educational Only.</strong>
+            All reviews are educational and do not constitute dental advice, diagnosis, or treatment.
+        </div>
+    </div>
+
+    <script>
+        function submitReview() {
+            const response = document.getElementById('response-text').value.trim();
+
+            if (!response) {
+                alert('Please write your educational review before submitting.');
+                return;
+            }
+
+            if (response.length < 100) {
+                alert('Your review seems quite short. Patients on the Expert tier expect a thorough educational review. Please add more detail.');
+                return;
+            }
+
+            // In production, this would POST to Supabase/API
+            // For now, show the success state
+            const confirmed = confirm(
+                'Ready to submit this review? The patient will be notified immediately.\n\n' +
+                'Preview:\n' + response.substring(0, 200) + '...'
+            );
+
+            if (confirmed) {
+                document.getElementById('review-form').style.display = 'none';
+                document.getElementById('success-message').classList.add('visible');
+
+                // In production: POST to API endpoint
+                console.log('Review submitted:', {
+                    reviewId: 'DEMO-001',
+                    response: response,
+                    submittedAt: new Date().toISOString(),
+                });
+            }
+        }
+
+        function saveDraft() {
+            const response = document.getElementById('response-text').value;
+            localStorage.setItem('review_draft_DEMO-001', response);
+            alert('Draft saved! You can come back to finish it later.');
+        }
+
+        // Load any saved draft
+        window.addEventListener('load', function() {
+            const draft = localStorage.getItem('review_draft_DEMO-001');
+            if (draft) {
+                document.getElementById('response-text').value = draft;
+            }
+        });
+    </script>
+</body>
+</html>

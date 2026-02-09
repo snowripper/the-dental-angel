@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,278 +7,261 @@ import {
   SafeAreaView,
   FlatList,
   Alert,
-  RefreshControl,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from '@react-navigation/native';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../constants/theme';
+import { COLORS } from '../constants/theme';
 import { conversationService, Conversation } from '../services/conversationService';
+import type { HistoryScreenProps } from '../types/navigation';
 
-interface HistoryScreenProps {
-  navigation: any;
-}
-
-export default function HistoryScreen({ navigation }: HistoryScreenProps) {
+/**
+ * History Screen
+ * Shows list of past conversations
+ * Allows users to resume or delete conversations
+ */
+export function HistoryScreen({ navigation }: HistoryScreenProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
-  // Load conversations when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
+  useEffect(() => {
+    loadConversations();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
       loadConversations();
-    }, [])
-  );
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const loadConversations = async () => {
+    setIsLoading(true);
     try {
-      const data = await conversationService.getAll();
-      setConversations(data);
+      const convos = await conversationService.getAll();
+      setConversations(convos);
     } catch (error) {
-      console.error('Error loading conversations:', error);
+      console.error('Failed to load conversations:', error);
     } finally {
       setIsLoading(false);
-      setRefreshing(false);
     }
   };
 
-  const handleRefresh = () => {
-    setRefreshing(true);
-    loadConversations();
-  };
-
-  const handleDelete = (conversation: Conversation) => {
-    Alert.alert(
-      'Delete Conversation',
-      'Are you sure you want to delete this conversation? This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            await conversationService.delete(conversation.id);
-            setConversations((prev) => prev.filter((c) => c.id !== conversation.id));
-          },
+  const deleteConversation = async (id: string) => {
+    Alert.alert('Delete Conversation', 'Are you sure you want to delete this conversation?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await conversationService.delete(id);
+          loadConversations();
         },
-      ]
-    );
+      },
+    ]);
   };
 
-  const renderConversation = ({ item }: { item: Conversation }) => (
-    <TouchableOpacity
-      style={styles.conversationCard}
-      onPress={() => navigation.navigate('Chat', { conversationId: item.id })}
-      onLongPress={() => handleDelete(item)}
-    >
-      <View style={styles.conversationIcon}>
-        <Ionicons name="chatbubbles" size={24} color={colors.primary.main} />
-      </View>
-      <View style={styles.conversationContent}>
-        <Text style={styles.conversationTitle} numberOfLines={1}>
-          {item.title}
-        </Text>
-        <Text style={styles.conversationPreview} numberOfLines={2}>
-          {item.preview || 'No messages yet'}
-        </Text>
-        <Text style={styles.conversationDate}>
-          {conversationService.formatDate(item.updatedAt)}
-        </Text>
-      </View>
-      <Ionicons name="chevron-forward" size={20} color={colors.neutral.gray} />
-    </TouchableOpacity>
-  );
+  const openConversation = (conversation: Conversation) => {
+    navigation.navigate('Chat', { conversationId: conversation.id });
+  };
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <View style={styles.emptyIconContainer}>
-        <Ionicons name="chatbubbles-outline" size={64} color={colors.neutral.gray} />
-      </View>
-      <Text style={styles.emptyTitle}>No Conversations Yet</Text>
-      <Text style={styles.emptyText}>
-        Start a conversation with The Dental Angel and it will appear here.
-      </Text>
-      <TouchableOpacity style={styles.startButton} onPress={() => navigation.navigate('Chat')}>
-        <Ionicons name="add" size={20} color={colors.neutral.white} />
-        <Text style={styles.startButtonText}>Start New Conversation</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.historyContainer}>
+        <View style={styles.loadingCenter}>
+          <ActivityIndicator size="large" color={COLORS.primary500} />
+          <Text style={styles.loadingCenterText}>Loading your conversations...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (conversations.length === 0) {
+    return (
+      <SafeAreaView style={styles.historyContainer}>
+        <View style={styles.emptyState}>
+          <Ionicons name="chatbubbles-outline" size={60} color={COLORS.primary300} />
+          <Text style={styles.emptyTitle}>No Conversations Yet</Text>
+          <Text style={styles.emptySubtitle}>
+            Your chats with The Dental Angel will appear here
+          </Text>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => navigation.navigate('Chat')}
+          >
+            <Ionicons name="chatbubbles" size={24} color="white" />
+            <Text style={styles.primaryButtonText}>Start a Chat</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={colors.primary.darkest} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Your Conversations</Text>
-        <View style={styles.headerRight} />
-      </View>
-
-      {/* Conversation List */}
+    <SafeAreaView style={styles.historyContainer}>
       <FlatList
         data={conversations}
-        renderItem={renderConversation}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={[
-          styles.listContent,
-          conversations.length === 0 && styles.listContentEmpty,
-        ]}
-        ListEmptyComponent={!isLoading ? renderEmpty : null}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.primary.main}
-          />
-        }
+        contentContainerStyle={styles.historyList}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.conversationCard}
+            onPress={() => openConversation(item)}
+            onLongPress={() => deleteConversation(item.id)}
+          >
+            <View style={styles.conversationHeader}>
+              <Text style={styles.conversationTitle} numberOfLines={1}>
+                {item.title}
+              </Text>
+              <Text style={styles.conversationDate}>
+                {conversationService.formatDate(item.updatedAt)}
+              </Text>
+            </View>
+            <Text style={styles.conversationPreview} numberOfLines={2}>
+              {item.preview || 'No messages yet'}
+            </Text>
+            <View style={styles.conversationFooter}>
+              <Text style={styles.messageCount}>
+                {item.messages.length} {item.messages.length === 1 ? 'message' : 'messages'}
+              </Text>
+              <Ionicons name="chevron-forward" size={18} color={COLORS.neutral400} />
+            </View>
+          </TouchableOpacity>
+        )}
       />
-
-      {/* New Conversation Button */}
-      {conversations.length > 0 && (
-        <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('Chat')}>
-          <Ionicons name="add" size={28} color={colors.neutral.white} />
-        </TouchableOpacity>
-      )}
-
-      {/* Help Text */}
-      {conversations.length > 0 && (
-        <View style={styles.helpContainer}>
-          <Text style={styles.helpText}>Tip: Press and hold a conversation to delete it</Text>
-        </View>
-      )}
+      <Text style={styles.historyHint}>Tip: Press and hold a conversation to delete it</Text>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  historyContainer: {
     flex: 1,
-    backgroundColor: colors.primary.lightest,
+    backgroundColor: COLORS.neutral50,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.primary.lightest,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.neutral.lightGray,
+  historyList: {
+    padding: 16,
   },
-  backButton: {
-    padding: spacing.xs,
-  },
-  headerTitle: {
-    fontSize: fontSize.lg,
-    fontWeight: '600',
-    color: colors.primary.darkest,
-  },
-  headerRight: {
-    width: 32,
-  },
-  listContent: {
-    padding: spacing.md,
-  },
-  listContentEmpty: {
-    flex: 1,
-  },
-  conversationCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.neutral.white,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    marginBottom: spacing.sm,
-    ...shadows.soft,
-  },
-  conversationIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.angel.glow,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.md,
-  },
-  conversationContent: {
-    flex: 1,
-  },
-  conversationTitle: {
-    fontSize: fontSize.md,
-    fontWeight: '600',
-    color: colors.primary.darkest,
-    marginBottom: 2,
-  },
-  conversationPreview: {
-    fontSize: fontSize.sm,
-    color: colors.neutral.darkGray,
-    marginBottom: 4,
-  },
-  conversationDate: {
-    fontSize: fontSize.xs,
-    color: colors.neutral.gray,
-  },
-  emptyContainer: {
+  loadingCenter: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.xl,
   },
-  emptyIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: colors.angel.glow,
+  loadingCenterText: {
+    marginTop: 12,
+    color: COLORS.neutral500,
+    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
+  },
+  emptyState: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    padding: 24,
   },
   emptyTitle: {
-    fontSize: fontSize.xl,
-    fontWeight: '600',
-    color: colors.primary.darkest,
-    marginBottom: spacing.sm,
+    fontSize: 20,
+    fontFamily: 'Inter_600SemiBold',
+    color: COLORS.neutral700,
+    marginTop: 16,
+    marginBottom: 8,
   },
-  emptyText: {
-    fontSize: fontSize.md,
-    color: colors.neutral.darkGray,
+  emptySubtitle: {
+    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral500,
     textAlign: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: 24,
   },
-  startButton: {
+  primaryButton: {
+    backgroundColor: COLORS.primary500,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.primary.main,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.lg,
-    gap: spacing.xs,
-  },
-  startButtonText: {
-    color: colors.neutral.white,
-    fontSize: fontSize.md,
-    fontWeight: '600',
-  },
-  fab: {
-    position: 'absolute',
-    bottom: spacing.xl + 40,
-    right: spacing.lg,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primary.main,
     justifyContent: 'center',
-    alignItems: 'center',
-    ...shadows.medium,
+    gap: 10,
+    marginBottom: 16,
+    minHeight: 48,
+    ...Platform.select({
+      ios: {
+        shadowColor: COLORS.primary500,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
-  helpContainer: {
-    padding: spacing.md,
-    alignItems: 'center',
+  primaryButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontFamily: 'Inter_600SemiBold',
   },
-  helpText: {
-    fontSize: fontSize.xs,
-    color: colors.neutral.gray,
+  conversationCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  conversationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  conversationTitle: {
+    fontSize: 17,
+    fontFamily: 'Inter_600SemiBold',
+    color: COLORS.neutral800,
+    flex: 1,
+    marginRight: 8,
+  },
+  conversationDate: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral400,
+  },
+  conversationPreview: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral500,
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  conversationFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  messageCount: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral400,
+  },
+  historyHint: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral400,
+    textAlign: 'center',
+    paddingVertical: 12,
+    backgroundColor: COLORS.white,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.neutral200,
   },
 });

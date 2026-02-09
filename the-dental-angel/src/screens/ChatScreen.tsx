@@ -1,434 +1,909 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
+  SafeAreaView,
   FlatList,
+  TextInput,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Image,
+  Alert,
+  ActivityIndicator,
+  ListRenderItemInfo,
+  ScrollView,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../constants/theme';
-import { INITIAL_GREETING } from '../constants/angelPersonality';
-import { sendMessageToAngel, analyzeImage } from '../services/aiService';
+import * as Clipboard from 'expo-clipboard';
+import { COLORS, spacing, fontSize, borderRadius } from '../constants/theme';
+import { sendMessageToAngel } from '../services/aiService';
 import { conversationService, Conversation } from '../services/conversationService';
+import { shareService } from '../services/shareService';
+import { INITIAL_GREETING, getPersonalizedGreeting } from '../constants/angelPersonality';
+import { FamilyShareRow } from '../components/FamilyShareButton';
+import { SecondOpinionScoreCard } from '../components/SecondOpinionScoreCard';
+import { QuestionsToAskCard, parseQuestionsFromResponse } from '../components/QuestionsToAskCard';
+import { paymentService } from '../services/paymentService';
+import { PaywallModal } from '../components/PaywallModal';
+import { ExpertReviewBanner } from '../components/ExpertReviewBanner';
+import { ExpertReviewCard } from '../components/ExpertReviewCard';
+import { expertReviewService, type ExpertReview } from '../services/expertReviewService';
+import { userSettingsService } from '../services/userSettingsService';
+import type { ChatScreenProps } from '../types/navigation';
+import type { DisplayMessage } from '../types/chat';
 
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-  imageUri?: string;
-}
+/**
+ * Chat Screen
+ * Main conversation interface with The Dental Angel AI
+ */
+export function ChatScreen({ navigation, route }: ChatScreenProps) {
+  const imageUri = route.params?.imageUri;
+  const initialAnalysis = route.params?.initialAnalysis;
+  const loadedConversationId = route.params?.conversationId;
+  const initialMessage = route.params?.initialMessage;
 
-interface ChatScreenProps {
-  navigation: any;
-  route: {
-    params?: {
-      imageUri?: string;
-      conversationId?: string;
-    };
-  };
-}
-
-const createInitialMessages = (): Message[] => [
-  {
-    id: '1',
-    text: INITIAL_GREETING,
-    isUser: false,
-    timestamp: new Date(),
-  },
-];
-
-export default function ChatScreen({ navigation, route }: ChatScreenProps) {
-  const [messages, setMessages] = useState<Message[]>(createInitialMessages());
-  const [inputText, setInputText] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [conversation, setConversation] = useState<Conversation | null>(null);
-  const flatListRef = useRef<FlatList>(null);
-  const hasInitialized = useRef(false);
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
+  const [inputText, setInputText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isFreeTier, setIsFreeTier] = useState(true);
+  const [isExpertTier, setIsExpertTier] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeName, setWelcomeName] = useState('');
+  const [welcomeZip, setWelcomeZip] = useState('');
+  const [expertReview, setExpertReview] = useState<ExpertReview | null>(null);
+  const [hasActiveReview, setHasActiveReview] = useState(false);
+  const [showFullReview, setShowFullReview] = useState(false);
+  const flatListRef = useRef<FlatList<DisplayMessage>>(null);
 
-  // Initialize conversation on mount
   useEffect(() => {
-    if (hasInitialized.current) return;
-    hasInitialized.current = true;
-
     const initConversation = async () => {
-      if (route.params?.conversationId) {
-        // Load existing conversation
-        const existing = await conversationService.get(route.params.conversationId);
-        if (existing) {
-          setConversation(existing);
-          // Convert saved messages to display format
-          const displayMessages: Message[] = existing.messages.map((m) => ({
+      if (loadedConversationId) {
+        const loaded = await conversationService.get(loadedConversationId);
+        if (loaded) {
+          setConversation(loaded);
+          const displayMessages = loaded.messages.map((m) => ({
             id: m.id,
             text: m.content,
             isUser: m.role === 'user',
-            timestamp: new Date(m.timestamp),
             imageUri: m.imageUri,
           }));
-          // Add initial greeting if no messages
-          if (displayMessages.length === 0) {
-            setMessages(createInitialMessages());
-          } else {
-            setMessages(displayMessages);
-          }
+          setMessages(displayMessages);
           return;
         }
       }
-      // Create new conversation
-      const newConversation = conversationService.createConversation();
-      setConversation(newConversation);
+
+      // Check if user has a name set — if not, show welcome card
+      const settings = await userSettingsService.get();
+      if (!settings.firstName && !loadedConversationId && !imageUri) {
+        setShowWelcome(true);
+        return;
+      }
+
+      startNewConversation(settings.firstName);
     };
 
     initConversation();
+  }, [loadedConversationId, imageUri, initialAnalysis, initialMessage]);
+
+  const startNewConversation = (firstName: string | null) => {
+    const newConvo = conversationService.createConversation();
+    setConversation(newConvo);
+
+    if (imageUri && initialAnalysis) {
+      const welcomeMsg = {
+        id: '1',
+        text: "I've analyzed your image. Here's what I can help you understand:",
+        isUser: false,
+      };
+      const analysisMsg = { id: '2', text: initialAnalysis, isUser: false, imageUri: imageUri };
+      setMessages([welcomeMsg, analysisMsg]);
+
+      let updated = conversationService.addMessage(newConvo, 'assistant', welcomeMsg.text);
+      updated = conversationService.addMessage(updated, 'assistant', initialAnalysis, imageUri);
+      setConversation(updated);
+      conversationService.save(updated);
+    } else {
+      const greeting = firstName ? getPersonalizedGreeting(firstName) : INITIAL_GREETING;
+      const welcomeMsg = { id: '1', text: greeting, isUser: false };
+      setMessages([welcomeMsg]);
+
+      const updated = conversationService.addMessage(newConvo, 'assistant', greeting);
+      setConversation(updated);
+      conversationService.save(updated);
+    }
+
+    // If there's an initial message from Plans screen, send it automatically
+    if (initialMessage) {
+      setInputText(initialMessage);
+    }
+  };
+
+  const handleWelcomeComplete = async () => {
+    const name = welcomeName.trim();
+    if (!name) return;
+
+    // Save the name
+    await userSettingsService.setFirstName(name);
+
+    // Save zip if provided
+    const zip = welcomeZip.replace(/[^0-9]/g, '').slice(0, 5);
+    if (zip.length === 5) {
+      await userSettingsService.setZipCode(zip);
+    }
+
+    setShowWelcome(false);
+    startNewConversation(name);
+  };
+
+  // Check if user is on Expert tier and load any existing review
+  useEffect(() => {
+    const checkExpertStatus = async () => {
+      const settings = await userSettingsService.get();
+      const isActive = await userSettingsService.isSubscriptionActive();
+      setIsFreeTier(settings.subscriptionTier === 'free');
+      setIsExpertTier(settings.subscriptionTier === 'expert' && isActive);
+    };
+    checkExpertStatus();
   }, []);
 
-  // Handle incoming image from Camera screen
+  // Load expert review for this conversation
   useEffect(() => {
-    if (route.params?.imageUri) {
-      handleImageAnalysis(route.params.imageUri);
-      // Clear the param so it doesn't re-trigger
-      navigation.setParams({ imageUri: undefined });
-    }
-  }, [route.params?.imageUri]);
+    if (!conversation?.id) return;
 
-  // Save conversation when messages change
-  const saveConversation = async (updatedConversation: Conversation) => {
-    setConversation(updatedConversation);
-    await conversationService.save(updatedConversation);
-  };
+    const loadReview = async () => {
+      const reviews = await expertReviewService.getForConversation(conversation.id);
+      if (reviews.length > 0) {
+        setExpertReview(reviews[0]);
+        setHasActiveReview(reviews[0].status !== 'completed');
+      }
+    };
+    loadReview();
 
-  const handleImageAnalysis = async (imageUri: string) => {
+    // Poll for review completion every 30 seconds
+    const interval = setInterval(loadReview, 30000);
+    return () => clearInterval(interval);
+  }, [conversation?.id]);
+
+  // Request Dr. Angel's personal review
+  const handleRequestReview = useCallback(async () => {
     if (!conversation) return;
 
-    // Add user message with image
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: "I'd like help understanding this image.",
-      isUser: true,
-      timestamp: new Date(),
-      imageUri: imageUri,
-    };
+    Alert.alert(
+      "Request Dr. Angel's Review",
+      "Dr. Angel will personally review your treatment plan and provide his educational insights within 24 hours.\n\nYou'll get a notification when it's ready. In the meantime, keep chatting with the AI!",
+      [
+        { text: 'Not Yet', style: 'cancel' },
+        {
+          text: 'Request Review',
+          onPress: async () => {
+            const conversationMessages = messages.map((m) => ({
+              role: m.isUser ? 'user' : 'assistant',
+              content: m.text,
+            }));
 
-    setMessages((prev) => [...prev, userMessage]);
-    setIsTyping(true);
+            const userMessages = messages.filter((m) => m.isUser);
+            const patientSummary =
+              userMessages.length > 0
+                ? userMessages.map((m) => m.text).join('\n')
+                : 'Patient requested a general review.';
 
-    // Save user message
-    let updatedConversation = conversationService.addMessage(
-      conversation,
-      'user',
-      userMessage.text,
-      imageUri
+            const review = await expertReviewService.requestReview({
+              conversationId: conversation.id,
+              patientSummary,
+              conversationMessages,
+              treatmentPlanImageUri: messages.find((m) => m.imageUri)?.imageUri,
+            });
+
+            setExpertReview(review);
+            setHasActiveReview(true);
+
+            // Add a message from the AI acknowledging the review request
+            const ackMessage: DisplayMessage = {
+              id: Date.now().toString(),
+              text: "Great news! I've submitted your case to Dr. Angel for a personal educational review. He'll review everything we've discussed and share his insights within 24 hours.\n\nYou'll get a notification when his review is ready. In the meantime, I'm still here — feel free to keep asking me anything!",
+              isUser: false,
+            };
+            setMessages((prev) => [...prev, ackMessage]);
+
+            const updatedConvo = conversationService.addMessage(
+              conversation,
+              'assistant',
+              ackMessage.text
+            );
+            setConversation(updatedConvo);
+            conversationService.save(updatedConvo);
+          },
+        },
+      ]
     );
-
-    try {
-      // Analyze the image
-      const response = await analyzeImage(imageUri);
-
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response.message,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
-
-      // Save AI response
-      updatedConversation = conversationService.addMessage(
-        updatedConversation,
-        'assistant',
-        response.message
-      );
-      await saveConversation(updatedConversation);
-    } catch (error) {
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'I had trouble analyzing that image. Could you try taking another photo with better lighting?',
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
+  }, [conversation, messages]);
 
   const sendMessage = async () => {
-    if (!inputText.trim() || !conversation) return;
+    if (!inputText.trim() || isLoading || !conversation) return;
 
-    const userMessageText = inputText.trim();
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: userMessageText,
-      isUser: true,
-      timestamp: new Date(),
-    };
+    // Check if user can send more messages (paywall for free users)
+    const access = await paymentService.canSendMessage();
+    if (!access.allowed) {
+      setShowPaywall(true);
+      return;
+    }
+
+    const userText = inputText.trim();
+    const userMessage = { id: Date.now().toString(), text: userText, isUser: true };
 
     setMessages((prev) => [...prev, userMessage]);
     setInputText('');
-    setIsTyping(true);
+    setIsLoading(true);
 
-    // Save user message
-    let updatedConversation = conversationService.addMessage(conversation, 'user', userMessageText);
+    let updatedConvo = conversationService.addMessage(conversation, 'user', userText);
+    setConversation(updatedConvo);
+    conversationService.save(updatedConvo);
 
     try {
-      // Get response from The Dental Angel AI
-      const response = await sendMessageToAngel(userMessageText);
+      const history = messages.map((m) => ({
+        role: m.isUser ? ('user' as const) : ('assistant' as const),
+        content: m.text,
+      }));
 
-      const aiMessage: Message = {
+      const response = await sendMessageToAngel(userText, history);
+
+      const aiMessage: DisplayMessage = {
         id: (Date.now() + 1).toString(),
         text: response.message,
         isUser: false,
-        timestamp: new Date(),
+        secondOpinionScore: response.secondOpinionScore,
       };
       setMessages((prev) => [...prev, aiMessage]);
 
-      // Save AI response
-      updatedConversation = conversationService.addMessage(
-        updatedConversation,
-        'assistant',
-        response.message
-      );
-      await saveConversation(updatedConversation);
+      updatedConvo = conversationService.addMessage(updatedConvo, 'assistant', response.message);
+      setConversation(updatedConvo);
+      conversationService.save(updatedConvo);
+
+      // Count this message for free-tier tracking
+      await paymentService.incrementMessageCount();
     } catch (error) {
-      // Show friendly error message
-      const errorMessage: Message = {
+      const errorText = 'Oops! I had a little hiccup there. Could you try asking again?';
+      const errorMessage = {
         id: (Date.now() + 1).toString(),
-        text: 'Oops! I had a little hiccup there. Could you try asking again?',
+        text: errorText,
         isUser: false,
-        timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
+
+      updatedConvo = conversationService.addMessage(updatedConvo, 'assistant', errorText);
+      setConversation(updatedConvo);
+      conversationService.save(updatedConvo);
     } finally {
-      setIsTyping(false);
+      setIsLoading(false);
     }
   };
 
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.angelBubble]}>
-      {!item.isUser && (
-        <View style={styles.angelIcon}>
-          <Ionicons name="heart" size={16} color={colors.primary.main} />
-        </View>
-      )}
-      <View style={[styles.messageContent, item.isUser ? styles.userContent : styles.angelContent]}>
-        {/* Show image if present */}
-        {item.imageUri && (
-          <Image source={{ uri: item.imageUri }} style={styles.messageImage} resizeMode="cover" />
-        )}
-        <Text style={[styles.messageText, item.isUser ? styles.userText : styles.angelText]}>
-          {item.text}
-        </Text>
-      </View>
-    </View>
-  );
-
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoid}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={90}
-      >
-        {/* Chat Messages */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.messagesList}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
-        />
+    <SafeAreaView style={styles.chatContainer}>
+      <PaywallModal
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        onPurchaseComplete={() => setShowPaywall(false)}
+        context="chat"
+      />
 
-        {/* Typing Indicator */}
-        {isTyping && (
-          <View style={styles.typingContainer}>
-            <View style={styles.angelIcon}>
-              <Ionicons name="heart" size={16} color={colors.primary.main} />
+      {/* Full Review Modal */}
+      {expertReview?.drAngelResponse && (
+        <Modal
+          visible={showFullReview}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={() => setShowFullReview(false)}
+        >
+          <SafeAreaView style={styles.fullReviewModal}>
+            <View style={styles.fullReviewHeader}>
+              <Text style={styles.fullReviewTitle}>Dr. Angel's Review</Text>
+              <TouchableOpacity onPress={() => setShowFullReview(false)}>
+                <Ionicons name="close-circle" size={32} color={COLORS.neutral400} />
+              </TouchableOpacity>
             </View>
-            <View style={styles.typingBubble}>
-              <Text style={styles.typingText}>The Dental Angel is thinking...</Text>
+            <ScrollView style={styles.fullReviewContent}>
+              <View style={styles.fullReviewBadge}>
+                <Ionicons name="star" size={14} color="#FFFFFF" />
+                <Text style={styles.fullReviewBadgeText}>Personal Educational Review</Text>
+              </View>
+              <Text style={styles.fullReviewBody}>{expertReview.drAngelResponse}</Text>
+              <View style={styles.fullReviewDisclaimer}>
+                <Ionicons name="shield-checkmark-outline" size={14} color={COLORS.neutral500} />
+                <Text style={styles.fullReviewDisclaimerText}>
+                  This is an educational review. Always consult your own dentist for specific advice
+                  about your dental care.
+                </Text>
+              </View>
+            </ScrollView>
+          </SafeAreaView>
+        </Modal>
+      )}
+
+      {/* Welcome Card — first-time users */}
+      {showWelcome && (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        >
+          <ScrollView
+            contentContainerStyle={styles.welcomeScroll}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.welcomeCard}>
+              <Text style={styles.welcomeEmoji}>🦷</Text>
+              <Text style={styles.welcomeTitle}>Welcome to The Dental Angel!</Text>
+              <Text style={styles.welcomeSubtitle}>
+                I'm Dr. Angel — a retired dentist with 40 years of experience. Before we start, let
+                me get to know you a little.
+              </Text>
+
+              <View style={styles.welcomeInputGroup}>
+                <Text style={styles.welcomeLabel}>What's your first name?</Text>
+                <TextInput
+                  style={styles.welcomeInput}
+                  value={welcomeName}
+                  onChangeText={setWelcomeName}
+                  placeholder="Your first name"
+                  placeholderTextColor={COLORS.neutral400}
+                  autoFocus
+                  returnKeyType="next"
+                  autoCapitalize="words"
+                />
+              </View>
+
+              <View style={styles.welcomeInputGroup}>
+                <Text style={styles.welcomeLabel}>
+                  Your zip code <Text style={styles.welcomeOptional}>(optional)</Text>
+                </Text>
+                <TextInput
+                  style={styles.welcomeInput}
+                  value={welcomeZip}
+                  onChangeText={(t) => setWelcomeZip(t.replace(/[^0-9]/g, '').slice(0, 5))}
+                  placeholder="e.g. 90210"
+                  placeholderTextColor={COLORS.neutral400}
+                  keyboardType="number-pad"
+                  maxLength={5}
+                  returnKeyType="done"
+                />
+                <Text style={styles.welcomeHint}>
+                  This helps me give you accurate info about dental costs in your area
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={[styles.welcomeButton, !welcomeName.trim() && styles.welcomeButtonDisabled]}
+                onPress={handleWelcomeComplete}
+                disabled={!welcomeName.trim()}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.welcomeButtonText}>Let's Get Started!</Text>
+                <Ionicons name="arrow-forward" size={20} color={COLORS.white} />
+              </TouchableOpacity>
             </View>
-          </View>
-        )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
 
-        {/* Input Area */}
-        <View style={styles.inputContainer}>
-          {/* Camera button for adding images */}
-          <TouchableOpacity
-            style={styles.cameraButton}
-            onPress={() => navigation.navigate('Camera')}
-          >
-            <Ionicons name="camera" size={24} color={colors.primary.main} />
-          </TouchableOpacity>
+      {!showWelcome && (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        >
+          {/* Upgrade banner for free users */}
+          {isFreeTier && (
+            <TouchableOpacity
+              style={styles.upgradeBanner}
+              onPress={() => setShowPaywall(true)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.upgradeBannerContent}>
+                <Ionicons name="sparkles" size={18} color={COLORS.primary600} />
+                <Text style={styles.upgradeBannerText}>Free Preview</Text>
+                <Text style={styles.upgradeBannerCta}>Unlock Full Access</Text>
+                <Ionicons name="chevron-forward" size={16} color={COLORS.primary500} />
+              </View>
+            </TouchableOpacity>
+          )}
 
-          <TextInput
-            style={styles.textInput}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder="Ask me anything about your dental care..."
-            placeholderTextColor={colors.neutral.gray}
-            multiline
-            maxLength={1000}
-          />
-          <TouchableOpacity
-            style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
-            onPress={sendMessage}
-            disabled={!inputText.trim() || isTyping}
-          >
-            <Ionicons
-              name="send"
-              size={20}
-              color={inputText.trim() ? colors.neutral.white : colors.neutral.gray}
+          {/* Expert Review Banner for Expert tier users */}
+          {isExpertTier && messages.length > 2 && (
+            <ExpertReviewBanner
+              hasActiveReview={hasActiveReview}
+              onRequestReview={handleRequestReview}
             />
-          </TouchableOpacity>
-        </View>
+          )}
 
-        {/* Educational Disclaimer */}
-        <View style={styles.disclaimer}>
-          <Text style={styles.disclaimerText}>
-            Educational guidance only. Always follow your dentist's personalized advice.
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.messagesList}
+            onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            renderItem={({ item, index }: ListRenderItemInfo<DisplayMessage>) => {
+              // Parse questions from AI responses
+              const parsedQuestions = !item.isUser ? parseQuestionsFromResponse(item.text) : null;
+
+              const handleCopyQuestions = async () => {
+                if (parsedQuestions) {
+                  const questionsText = parsedQuestions.questions
+                    .map((q, i) => `${i + 1}. ${q}`)
+                    .join('\n');
+                  const fullText = `Questions to Ask Your Dentist:\n\n${questionsText}\n\n— From The Dental Angel`;
+                  await Clipboard.setStringAsync(fullText);
+                  Alert.alert('Copied!', 'Questions copied to clipboard. Ready to paste anywhere!');
+                }
+              };
+
+              const handleShareQuestions = async () => {
+                if (parsedQuestions) {
+                  await shareService.shareQuestions(parsedQuestions.questions);
+                }
+              };
+
+              // Share the entire AI message with family
+              const handleShareMessage = async () => {
+                if (!item.isUser && item.text) {
+                  await shareService.shareExplanation(item.text);
+                }
+              };
+
+              // Share Second Opinion Score
+              const handleShareScore = async () => {
+                if (item.secondOpinionScore) {
+                  const { score, label, reason } = item.secondOpinionScore;
+                  await shareService.shareScore(score, label, reason);
+                }
+              };
+
+              const messageView = (
+                <View
+                  style={[styles.messageBubble, item.isUser ? styles.userBubble : styles.aiBubble]}
+                >
+                  {!item.isUser && (
+                    <View style={styles.chatAngelIcon}>
+                      <Text style={styles.chatAngelEmoji}>🦷</Text>
+                    </View>
+                  )}
+                  <View
+                    style={[
+                      styles.messageContent,
+                      item.isUser ? styles.userContent : styles.aiContent,
+                    ]}
+                  >
+                    {item.imageUri && (
+                      <Image source={{ uri: item.imageUri }} style={styles.chatImage} />
+                    )}
+                    <Text
+                      style={[styles.messageText, item.isUser ? styles.userText : styles.aiText]}
+                    >
+                      {item.text}
+                    </Text>
+                    {item.secondOpinionScore && (
+                      <SecondOpinionScoreCard
+                        score={item.secondOpinionScore}
+                        onUploadPhoto={() => navigation.navigate('Camera')}
+                        onShare={handleShareScore}
+                      />
+                    )}
+                    {parsedQuestions && parsedQuestions.questions.length >= 2 && (
+                      <QuestionsToAskCard
+                        questions={parsedQuestions}
+                        onCopy={handleCopyQuestions}
+                        onShare={handleShareQuestions}
+                      />
+                    )}
+                    {/* Family Share Row for AI messages */}
+                    {!item.isUser && item.text.length > 100 && !parsedQuestions && (
+                      <FamilyShareRow
+                        onShare={handleShareMessage}
+                        hint="Share this with a loved one"
+                      />
+                    )}
+                  </View>
+                </View>
+              );
+
+              // If this is the last message and there's an expert review, show it
+              const isLastMessage = index === messages.length - 1;
+              if (isLastMessage && expertReview) {
+                return (
+                  <View>
+                    {messageView}
+                    <ExpertReviewCard
+                      review={expertReview}
+                      onViewFull={() => setShowFullReview(true)}
+                    />
+                  </View>
+                );
+              }
+
+              return messageView;
+            }}
+          />
+
+          {isLoading && (
+            <View style={styles.loadingContainer}>
+              <View style={styles.chatAngelIcon}>
+                <Text style={styles.chatAngelEmoji}>🦷</Text>
+              </View>
+              <View style={styles.loadingBubble}>
+                <ActivityIndicator size="small" color={COLORS.primary500} />
+                <Text style={styles.loadingText}>Dr. Angel is thinking...</Text>
+              </View>
+            </View>
+          )}
+
+          <View style={styles.inputContainer}>
+            <TouchableOpacity
+              style={styles.cameraIconButton}
+              onPress={() => navigation.navigate('Camera')}
+            >
+              <Ionicons name="camera" size={24} color={COLORS.primary500} />
+            </TouchableOpacity>
+            <TextInput
+              style={styles.textInput}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Ask Dr. Angel anything..."
+              placeholderTextColor={COLORS.neutral400}
+              multiline
+              editable={!isLoading}
+            />
+            <TouchableOpacity
+              style={[
+                styles.sendButton,
+                (!inputText.trim() || isLoading) && styles.sendButtonDisabled,
+              ]}
+              onPress={sendMessage}
+              disabled={!inputText.trim() || isLoading}
+            >
+              <Ionicons name="send" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.chatDisclaimer}>
+            I'm here to help you understand — always talk to your own dentist too!
           </Text>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  chatContainer: {
     flex: 1,
-    backgroundColor: colors.primary.lightest,
+    backgroundColor: COLORS.neutral50,
   },
-  keyboardAvoid: {
-    flex: 1,
+  upgradeBanner: {
+    backgroundColor: COLORS.primary50,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.primary100,
+  },
+  upgradeBannerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    gap: 6,
+  },
+  upgradeBannerText: {
+    fontSize: 14,
+    fontFamily: 'Inter_500Medium',
+    color: COLORS.neutral600,
+  },
+  upgradeBannerCta: {
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold',
+    color: COLORS.primary600,
+    marginLeft: 4,
   },
   messagesList: {
-    padding: spacing.md,
-    paddingBottom: spacing.lg,
+    padding: 16,
+    paddingBottom: 8,
   },
   messageBubble: {
     flexDirection: 'row',
-    marginBottom: spacing.md,
+    marginBottom: 12,
     alignItems: 'flex-end',
   },
   userBubble: {
     justifyContent: 'flex-end',
   },
-  angelBubble: {
+  aiBubble: {
     justifyContent: 'flex-start',
   },
-  angelIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.angel.glow,
+  chatAngelIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.primary50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: spacing.xs,
+    marginRight: 8,
+    borderWidth: 2,
+    borderColor: COLORS.primary200,
+  },
+  chatAngelEmoji: {
+    fontSize: 18,
   },
   messageContent: {
     maxWidth: '75%',
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
+    padding: 12,
+    paddingHorizontal: 16,
+  },
+  aiContent: {
+    backgroundColor: COLORS.white,
+    borderRadius: 16,
+    borderBottomLeftRadius: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+      },
+      android: {
+        elevation: 1,
+      },
+    }),
   },
   userContent: {
-    backgroundColor: colors.primary.main,
-    borderBottomRightRadius: spacing.xs,
+    backgroundColor: COLORS.primary500,
+    borderRadius: 16,
+    borderBottomRightRadius: 4,
     marginLeft: 'auto',
   },
-  angelContent: {
-    backgroundColor: colors.neutral.white,
-    borderBottomLeftRadius: spacing.xs,
-    ...shadows.soft,
-  },
-  messageImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.sm,
-  },
   messageText: {
-    fontSize: fontSize.md,
-    lineHeight: 22,
+    lineHeight: 24,
+  },
+  aiText: {
+    color: COLORS.neutral800,
+    fontSize: 18,
+    fontFamily: 'Inter_400Regular',
   },
   userText: {
-    color: colors.neutral.white,
+    color: COLORS.white,
+    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
   },
-  angelText: {
-    color: colors.neutral.charcoal,
+  chatImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 10,
   },
-  typingContainer: {
+  loadingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
-  typingBubble: {
-    backgroundColor: colors.neutral.white,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.md,
-    ...shadows.soft,
+  loadingBubble: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+    padding: 12,
+    borderRadius: 16,
+    borderBottomLeftRadius: 4,
+    gap: 8,
   },
-  typingText: {
-    color: colors.neutral.darkGray,
-    fontSize: fontSize.sm,
+  loadingText: {
+    color: COLORS.neutral500,
+    fontFamily: 'Inter_400Regular',
     fontStyle: 'italic',
   },
   inputContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.neutral.white,
+    padding: 12,
+    backgroundColor: COLORS.white,
     borderTopWidth: 1,
-    borderTopColor: colors.neutral.lightGray,
+    borderTopColor: COLORS.neutral200,
+    alignItems: 'flex-end',
   },
-  cameraButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.angel.glow,
+  cameraIconButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: COLORS.primary50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: spacing.sm,
+    marginRight: 8,
   },
   textInput: {
     flex: 1,
-    backgroundColor: colors.neutral.offWhite,
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    fontSize: fontSize.md,
+    backgroundColor: COLORS.neutral100,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
     maxHeight: 100,
-    color: colors.neutral.charcoal,
+    minHeight: 48,
+    color: COLORS.neutral800,
   },
   sendButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primary.main,
+    backgroundColor: COLORS.primary500,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: spacing.sm,
+    marginLeft: 10,
   },
   sendButtonDisabled: {
-    backgroundColor: colors.neutral.lightGray,
+    backgroundColor: COLORS.primary300,
   },
-  disclaimer: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.neutral.white,
-  },
-  disclaimerText: {
-    fontSize: fontSize.xs,
-    color: colors.neutral.gray,
+  chatDisclaimer: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral500,
     textAlign: 'center',
+    paddingVertical: 8,
+    backgroundColor: COLORS.white,
+  },
+  // Welcome Card
+  welcomeScroll: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 24,
+  },
+  welcomeCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 28,
+    alignItems: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  welcomeEmoji: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  welcomeTitle: {
+    fontSize: 22,
+    fontFamily: 'Inter_700Bold',
+    color: COLORS.neutral800,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  welcomeSubtitle: {
+    fontSize: 15,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral500,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  welcomeInputGroup: {
+    width: '100%',
+    marginBottom: 18,
+  },
+  welcomeLabel: {
+    fontSize: 15,
+    fontFamily: 'Inter_600SemiBold',
+    color: COLORS.neutral700,
+    marginBottom: 8,
+  },
+  welcomeOptional: {
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral400,
+    fontSize: 14,
+  },
+  welcomeInput: {
+    backgroundColor: COLORS.neutral100,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 17,
+    fontFamily: 'Inter_500Medium',
+    color: COLORS.neutral800,
+    borderWidth: 1,
+    borderColor: COLORS.neutral200,
+  },
+  welcomeHint: {
+    fontSize: 13,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral400,
+    marginTop: 6,
+    lineHeight: 18,
+  },
+  welcomeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primary500,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    width: '100%',
+    marginTop: 8,
+    gap: 8,
+  },
+  welcomeButtonDisabled: {
+    backgroundColor: COLORS.primary300,
+  },
+  welcomeButtonText: {
+    fontSize: 17,
+    fontFamily: 'Inter_600SemiBold',
+    color: COLORS.white,
+  },
+  // Full Review Modal
+  fullReviewModal: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  fullReviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.neutral200,
+  },
+  fullReviewTitle: {
+    fontSize: fontSize.h2,
+    fontWeight: '700',
+    color: COLORS.neutral800,
+  },
+  fullReviewContent: {
+    flex: 1,
+    padding: spacing.lg,
+  },
+  fullReviewBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: '#8B5CF6',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    alignSelf: 'flex-start',
+    marginBottom: spacing.lg,
+  },
+  fullReviewBadgeText: {
+    fontSize: fontSize.label,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  fullReviewBody: {
+    fontSize: fontSize.bodyLg,
+    lineHeight: 30,
+    color: COLORS.neutral700,
+    marginBottom: spacing.xl,
+  },
+  fullReviewDisclaimer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    padding: spacing.md,
+    backgroundColor: COLORS.neutral50,
+    borderRadius: borderRadius.sm,
+    marginBottom: spacing.xxxl,
+  },
+  fullReviewDisclaimerText: {
+    fontSize: fontSize.label,
+    color: COLORS.neutral500,
+    lineHeight: 20,
+    flex: 1,
   },
 });

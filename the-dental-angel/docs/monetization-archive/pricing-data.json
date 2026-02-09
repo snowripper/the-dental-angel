@@ -1,0 +1,262 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-02",
+  "default_currency": "USD",
+  "default_country": "US",
+
+  "tiers": {
+    "free": {
+      "id": "free",
+      "name": "Free Preview",
+      "headline": "See How It Works",
+      "description": "Not sure what to expect? Explore sample conversations, watch our dental education videos, and see how The Dental Angel helps thousands of patients understand their treatment plans — before you need us for yours.",
+      "button_text": "Explore Free Content",
+      "best_for": null,
+      "access_days": null,
+      "price_usd": 0,
+      "features": {
+        "view_sample_conversations": true,
+        "view_video_library": true,
+        "ai_chat_personal": false,
+        "upload_treatment_plan": false,
+        "basic_questions": false,
+        "cost_comparison": false,
+        "printable_questions_pdf": false,
+        "treatment_summary_pdf": false,
+        "red_flags_checklist": false,
+        "alternative_options": false,
+        "expert_review": false
+      }
+    },
+
+    "quick": {
+      "id": "quick",
+      "name": "Quick Answers",
+      "headline": "Understand Your Treatment Plan",
+      "description": "Got a treatment plan that doesn't make sense? Upload it or describe what your dentist told you, and get clear, plain-English explanations in minutes. No confusing dental jargon — just straight answers about what's being recommended and why.",
+      "button_text_template": "Get Answers — {price}",
+      "best_for": "Quick clarity when you just need to understand the basics.",
+      "access_days": 7,
+      "price_usd": 29,
+      "badge": null,
+      "features": {
+        "view_sample_conversations": true,
+        "view_video_library": true,
+        "ai_chat_personal": true,
+        "upload_treatment_plan": true,
+        "basic_questions": true,
+        "cost_comparison": false,
+        "printable_questions_pdf": false,
+        "treatment_summary_pdf": false,
+        "red_flags_checklist": false,
+        "alternative_options": false,
+        "expert_review": false
+      },
+      "feature_list": [
+        "Chat with our AI about your specific situation",
+        "Plain-language explanations of every procedure",
+        "Basic questions you might want to ask your dentist",
+        "7 days of access"
+      ]
+    },
+
+    "full": {
+      "id": "full",
+      "name": "Full Prep",
+      "headline": "Walk In Prepared, Walk Out Confident",
+      "description": "Don't just understand your treatment plan — be ready for your appointment. Get everything you need to have a real conversation with your dentist, ask the right questions, and make sure you're not paying more than you should.",
+      "button_text_template": "Get Fully Prepared — {price}",
+      "best_for": "Anyone facing a big decision who wants to feel fully prepared.",
+      "access_days": 14,
+      "price_usd": 49,
+      "badge": "MOST POPULAR",
+      "is_recommended": true,
+      "features": {
+        "view_sample_conversations": true,
+        "view_video_library": true,
+        "ai_chat_personal": true,
+        "upload_treatment_plan": true,
+        "basic_questions": true,
+        "cost_comparison": true,
+        "printable_questions_pdf": true,
+        "treatment_summary_pdf": true,
+        "red_flags_checklist": true,
+        "alternative_options": true,
+        "expert_review": false
+      },
+      "feature_list": [
+        "Everything in Quick Answers, plus:",
+        "14 days of access — twice the time to figure things out",
+        "\"Questions for Your Dentist\" printout — bring it to your appointment",
+        "Cost comparison — see what this treatment typically costs in your area",
+        "Treatment summary you can save — share with family or get a second opinion",
+        "Red flags checklist — warning signs of unnecessary treatment",
+        "Alternatives to ask about — other options your dentist might not have mentioned"
+      ]
+    },
+
+    "expert": {
+      "id": "expert",
+      "name": "Expert Review",
+      "headline": "A Real Dentist Reviews Your Plan",
+      "description": "Want an experienced dentist to personally look at your situation? Dr. Angel has 40 years of experience and will review your treatment plan, explain what he sees, and give you his honest perspective — no sales pitch, no agenda, just expertise.",
+      "button_text_template": "Request Expert Review — {price}",
+      "best_for": "Complex cases, expensive treatment plans, or anyone who wants human expertise.",
+      "access_days": 14,
+      "price_usd": 149,
+      "badge": null,
+      "features": {
+        "view_sample_conversations": true,
+        "view_video_library": true,
+        "ai_chat_personal": true,
+        "upload_treatment_plan": true,
+        "basic_questions": true,
+        "cost_comparison": true,
+        "printable_questions_pdf": true,
+        "treatment_summary_pdf": true,
+        "red_flags_checklist": true,
+        "alternative_options": true,
+        "expert_review": true
+      },
+      "feature_list": [
+        "Everything in Full Prep, plus:",
+        "Personal review by Dr. Angel — a real dentist, not just AI",
+        "Written assessment — his professional take on your treatment plan",
+        "Limited availability — only a handful of reviews per week"
+      ]
+    }
+  },
+
+  "pricing_by_country": {
+    "US": { "currency": "USD", "quick": 29, "full": 49, "expert": 149, "tier": "standard" },
+    "GB": { "currency": "GBP", "quick": 22, "full": 38, "expert": 112, "tier": "standard" },
+    "CA": { "currency": "CAD", "quick": 39, "full": 65, "expert": 199, "tier": "standard" },
+    "AU": { "currency": "AUD", "quick": 45, "full": 79, "expert": 239, "tier": "premium" },
+    "CH": { "currency": "CHF", "quick": 32, "full": 54, "expert": 164, "tier": "premium" },
+    "NO": { "currency": "NOK", "quick": 319, "full": 539, "expert": 1649, "tier": "premium" },
+    "DK": { "currency": "DKK", "quick": 199, "full": 339, "expert": 1029, "tier": "premium" },
+    "SE": { "currency": "SEK", "quick": 299, "full": 509, "expert": 1549, "tier": "premium" },
+    "DE": { "currency": "EUR", "quick": 27, "full": 45, "expert": 135, "tier": "standard" },
+    "FR": { "currency": "EUR", "quick": 27, "full": 45, "expert": 135, "tier": "standard" },
+    "NL": { "currency": "EUR", "quick": 27, "full": 45, "expert": 135, "tier": "standard" },
+    "BE": { "currency": "EUR", "quick": 27, "full": 45, "expert": 135, "tier": "standard" },
+    "AT": { "currency": "EUR", "quick": 27, "full": 45, "expert": 135, "tier": "standard" },
+    "IE": { "currency": "EUR", "quick": 27, "full": 45, "expert": 135, "tier": "standard" },
+    "ES": { "currency": "EUR", "quick": 19, "full": 35, "expert": 99, "tier": "moderate" },
+    "IT": { "currency": "EUR", "quick": 19, "full": 35, "expert": 99, "tier": "moderate" },
+    "PT": { "currency": "EUR", "quick": 19, "full": 35, "expert": 99, "tier": "moderate" },
+    "GR": { "currency": "EUR", "quick": 19, "full": 35, "expert": 99, "tier": "moderate" },
+    "JP": { "currency": "JPY", "quick": 3500, "full": 6000, "expert": 18000, "tier": "moderate" },
+    "KR": { "currency": "KRW", "quick": 29000, "full": 49000, "expert": 149000, "tier": "moderate" },
+    "SG": { "currency": "SGD", "quick": 29, "full": 49, "expert": 149, "tier": "moderate" },
+    "IL": { "currency": "ILS", "quick": 79, "full": 139, "expert": 419, "tier": "moderate" },
+    "AE": { "currency": "AED", "quick": 109, "full": 179, "expert": 549, "tier": "standard" },
+    "QA": { "currency": "QAR", "quick": 109, "full": 179, "expert": 549, "tier": "standard" },
+    "SA": { "currency": "SAR", "quick": 79, "full": 139, "expert": 419, "tier": "moderate" },
+    "BR": { "currency": "BRL", "quick": 79, "full": 129, "expert": 399, "tier": "value" },
+    "MX": { "currency": "MXN", "quick": 349, "full": 599, "expert": 1799, "tier": "value" },
+    "AR": { "currency": "ARS", "quick": 4999, "full": 8999, "expert": 26999, "tier": "value" },
+    "CL": { "currency": "CLP", "quick": 14999, "full": 24999, "expert": 74999, "tier": "value" },
+    "CO": { "currency": "COP", "quick": 59000, "full": 99000, "expert": 299000, "tier": "value" },
+    "TH": { "currency": "THB", "quick": 499, "full": 899, "expert": 2699, "tier": "value" },
+    "MY": { "currency": "MYR", "quick": 59, "full": 99, "expert": 299, "tier": "value" },
+    "ZA": { "currency": "ZAR", "quick": 299, "full": 499, "expert": 1499, "tier": "value" },
+    "PL": { "currency": "PLN", "quick": 79, "full": 139, "expert": 419, "tier": "value" },
+    "CZ": { "currency": "CZK", "quick": 399, "full": 699, "expert": 2099, "tier": "value" },
+    "HU": { "currency": "HUF", "quick": 5999, "full": 9999, "expert": 29999, "tier": "value" },
+    "RO": { "currency": "RON", "quick": 79, "full": 129, "expert": 399, "tier": "value" },
+    "IN": { "currency": "INR", "quick": 799, "full": 1499, "expert": 4499, "tier": "emerging" },
+    "ID": { "currency": "IDR", "quick": 149000, "full": 249000, "expert": 749000, "tier": "emerging" },
+    "PH": { "currency": "PHP", "quick": 499, "full": 899, "expert": 2699, "tier": "emerging" },
+    "VN": { "currency": "VND", "quick": 249000, "full": 449000, "expert": 1349000, "tier": "emerging" },
+    "TR": { "currency": "TRY", "quick": 299, "full": 499, "expert": 1499, "tier": "emerging" },
+    "EG": { "currency": "EGP", "quick": 449, "full": 749, "expert": 2249, "tier": "emerging" },
+    "PK": { "currency": "PKR", "quick": 2499, "full": 4499, "expert": 12999, "tier": "emerging" },
+    "BD": { "currency": "BDT", "quick": 999, "full": 1799, "expert": 5399, "tier": "emerging" },
+    "NG": { "currency": "NGN", "quick": 9999, "full": 17999, "expert": 53999, "tier": "emerging" },
+    "KE": { "currency": "KES", "quick": 999, "full": 1799, "expert": 5399, "tier": "emerging" }
+  },
+
+  "pricing_tiers_explanation": {
+    "premium": {
+      "description": "High income countries with expensive dental care",
+      "discount_from_base": "-10% to -20% (prices higher)",
+      "countries": ["CH", "NO", "DK", "SE", "AU"]
+    },
+    "standard": {
+      "description": "Base pricing markets",
+      "discount_from_base": "0%",
+      "countries": ["US", "GB", "CA", "DE", "FR", "NL", "BE", "AT", "IE", "AE", "QA"]
+    },
+    "moderate": {
+      "description": "Moderate purchasing power",
+      "discount_from_base": "~30%",
+      "countries": ["ES", "IT", "PT", "GR", "JP", "KR", "SG", "IL", "SA"]
+    },
+    "value": {
+      "description": "Lower purchasing power, moderate dental costs",
+      "discount_from_base": "~45%",
+      "countries": ["BR", "MX", "AR", "CL", "CO", "TH", "MY", "ZA", "PL", "CZ", "HU", "RO"]
+    },
+    "emerging": {
+      "description": "Low purchasing power, low dental costs",
+      "discount_from_base": "~65%",
+      "countries": ["IN", "ID", "PH", "VN", "TR", "EG", "PK", "BD", "NG", "KE"]
+    }
+  },
+
+  "comparison_table": {
+    "rows": [
+      { "feature": "AI chat about your treatment", "quick": true, "full": true, "expert": true },
+      { "feature": "Plain-language explanations", "quick": true, "full": true, "expert": true },
+      { "feature": "Access time", "quick": "7 days", "full": "14 days", "expert": "14 days" },
+      { "feature": "Questions to ask your dentist", "quick": "Basic", "full": "Printable sheet", "expert": "Printable sheet" },
+      { "feature": "Cost comparison for your area", "quick": false, "full": true, "expert": true },
+      { "feature": "Saveable treatment summary", "quick": false, "full": true, "expert": true },
+      { "feature": "Red flags checklist", "quick": false, "full": true, "expert": true },
+      { "feature": "Alternative options to ask about", "quick": false, "full": true, "expert": true },
+      { "feature": "Personal review by Dr. Angel", "quick": false, "full": false, "expert": true }
+    ]
+  },
+
+  "currency_symbols": {
+    "USD": "$",
+    "GBP": "£",
+    "EUR": "€",
+    "CAD": "CA$",
+    "AUD": "A$",
+    "CHF": "CHF",
+    "NOK": "kr",
+    "DKK": "kr",
+    "SEK": "kr",
+    "JPY": "¥",
+    "KRW": "₩",
+    "SGD": "S$",
+    "ILS": "₪",
+    "AED": "AED",
+    "QAR": "QAR",
+    "SAR": "SAR",
+    "BRL": "R$",
+    "MXN": "MX$",
+    "ARS": "ARS",
+    "CLP": "CLP",
+    "COP": "COP",
+    "THB": "฿",
+    "MYR": "RM",
+    "ZAR": "R",
+    "PLN": "zł",
+    "CZK": "Kč",
+    "HUF": "Ft",
+    "RON": "lei",
+    "INR": "₹",
+    "IDR": "Rp",
+    "PHP": "₱",
+    "VND": "₫",
+    "TRY": "₺",
+    "EGP": "E£",
+    "PKR": "Rs",
+    "BDT": "৳",
+    "NGN": "₦",
+    "KES": "KSh"
+  }
+}

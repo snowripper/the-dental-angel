@@ -1,0 +1,114 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="#E8F4FC"/>
+
+  <!-- Halo glow (outer) -->
+  <ellipse cx="512" cy="175" rx="150" ry="38" fill="#FEF3C7" opacity="0.6"/>
+
+  <!-- Halo (main ring) -->
+  <ellipse cx="512" cy="175" rx="120" ry="30" stroke="#F5D78E" stroke-width="18" fill="none"/>
+  <ellipse cx="512" cy="175" rx="120" ry="30" stroke="#FFD700" stroke-width="9" fill="none" opacity="0.7"/>
+
+  <!-- Left Wing (pointing DOWN) -->
+  <path d="M280 420
+           C240 420 200 440 170 480
+           C140 520 120 580 130 650
+           C140 720 170 780 200 820
+           C220 845 250 860 270 850
+           C290 840 295 810 290 770
+           C285 730 290 690 310 660
+           C330 630 350 620 350 600
+           C350 570 330 540 310 520
+           C290 500 280 480 290 460
+           C300 440 320 430 320 420
+           C320 410 300 420 280 420Z"
+        fill="white"
+        stroke="#A7D3F3"
+        stroke-width="6"/>
+
+  <!-- Left wing feather details -->
+  <path d="M200 550 C220 560 230 600 220 640" stroke="#C5E4F7" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M240 520 C260 540 270 590 255 640" stroke="#C5E4F7" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M170 620 C190 640 200 700 185 760" stroke="#C5E4F7" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+  <!-- Right Wing (pointing DOWN) -->
+  <path d="M744 420
+           C784 420 824 440 854 480
+           C884 520 904 580 894 650
+           C884 720 854 780 824 820
+           C804 845 774 860 754 850
+           C734 840 729 810 734 770
+           C739 730 734 690 714 660
+           C694 630 674 620 674 600
+           C674 570 694 540 714 520
+           C734 500 744 480 734 460
+           C724 440 704 430 704 420
+           C704 410 724 420 744 420Z"
+        fill="white"
+        stroke="#A7D3F3"
+        stroke-width="6"/>
+
+  <!-- Right wing feather details -->
+  <path d="M824 550 C804 560 794 600 804 640" stroke="#C5E4F7" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M784 520 C764 540 754 590 769 640" stroke="#C5E4F7" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M854 620 C834 640 824 700 839 760" stroke="#C5E4F7" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+  <!-- Molar tooth body - cute rounded square shape with bumpy top -->
+  <path d="M340 340
+           C340 300 360 270 400 260
+           C430 253 470 250 512 250
+           C554 250 594 253 624 260
+           C664 270 684 300 684 340
+           C684 400 690 500 680 600
+           C675 660 665 720 640 760
+           C620 790 590 810 560 800
+           C540 793 525 770 512 770
+           C499 770 484 793 464 800
+           C434 810 404 790 384 760
+           C359 720 349 660 344 600
+           C334 500 340 400 340 340Z"
+        fill="white"
+        stroke="#6BB3D9"
+        stroke-width="12"/>
+
+  <!-- Molar cusps (bumpy top) - 4 rounded bumps -->
+  <ellipse cx="400" cy="280" rx="45" ry="35" fill="white" stroke="#6BB3D9" stroke-width="8"/>
+  <ellipse cx="512" cy="270" rx="50" ry="40" fill="white" stroke="#6BB3D9" stroke-width="8"/>
+  <ellipse cx="624" cy="280" rx="45" ry="35" fill="white" stroke="#6BB3D9" stroke-width="8"/>
+
+  <!-- Fill gaps between cusps -->
+  <rect x="355" y="280" width="314" height="60" fill="white"/>
+  <path d="M355 300 L355 340 C355 340 400 350 512 350 C624 350 669 340 669 340 L669 300" fill="white"/>
+
+  <!-- Cusp highlights -->
+  <ellipse cx="395" cy="275" rx="20" ry="15" fill="#F0F9FF" opacity="0.7"/>
+  <ellipse cx="505" cy="265" rx="22" ry="17" fill="#F0F9FF" opacity="0.7"/>
+  <ellipse cx="618" cy="275" rx="20" ry="15" fill="#F0F9FF" opacity="0.7"/>
+
+  <!-- Tooth body highlight (shine) -->
+  <ellipse cx="390" cy="480" rx="40" ry="70" fill="#F0F9FF" opacity="0.6"/>
+
+  <!-- Left eye - big cute style -->
+  <ellipse cx="420" cy="500" rx="38" ry="44" fill="#4A5568"/>
+  <ellipse cx="430" cy="488" rx="14" ry="17" fill="white"/>
+  <ellipse cx="436" cy="495" rx="6" ry="7" fill="white" opacity="0.6"/>
+
+  <!-- Right eye - big cute style -->
+  <ellipse cx="604" cy="500" rx="38" ry="44" fill="#4A5568"/>
+  <ellipse cx="614" cy="488" rx="14" ry="17" fill="white"/>
+  <ellipse cx="620" cy="495" rx="6" ry="7" fill="white" opacity="0.6"/>
+
+  <!-- Cute smile -->
+  <path d="M420 620 Q512 720 604 620"
+        stroke="#4A5568"
+        stroke-width="14"
+        stroke-linecap="round"
+        fill="none"/>
+
+  <!-- Rosy cheeks -->
+  <ellipse cx="355" cy="580" rx="35" ry="24" fill="#FECACA" opacity="0.5"/>
+  <ellipse cx="669" cy="580" rx="35" ry="24" fill="#FECACA" opacity="0.5"/>
+
+  <!-- Subtle shadow under tooth -->
+  <ellipse cx="512" cy="850" rx="170" ry="30" fill="#6BB3D9" opacity="0.12"/>
+</svg>

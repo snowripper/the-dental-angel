@@ -1,253 +1,175 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, shadows } from '../constants/theme';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Platform,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../constants/theme';
+import type { WelcomeScreenProps } from '../types/navigation';
 
-interface WelcomeScreenProps {
-  navigation: any;
-}
+const DentalAngelImage = require('../../assets/dental-angel.jpg');
 
-export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
+/**
+ * Welcome Screen
+ * First screen users see when opening the app
+ * Introduces The Dental Angel and its features
+ */
+export function WelcomeScreen({ navigation }: WelcomeScreenProps) {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.primary.lightest} />
+    <ScrollView contentContainerStyle={styles.welcomeContainer}>
+      <Image source={DentalAngelImage} style={styles.welcomeImage} resizeMode="cover" />
+      <Text style={styles.welcomeTitle}>The Dental Angel</Text>
+      <Text style={styles.welcomeSubtitle}>Understand before you decide</Text>
+      <Text style={styles.welcomeCredential}>Powered by 40 years of real dental experience</Text>
 
-      {/* Hero Section with Dental Angel */}
-      <View style={styles.heroSection}>
-        {/* Dental Angel Figure */}
-        <View style={styles.angelFigureContainer}>
-          {/* Golden Halo */}
-          <View style={styles.halo} />
-          {/* Dentist Figure */}
-          <View style={styles.dentistContainer}>
-            {/* Head */}
-            <View style={styles.dentistHead}>
-              <Text style={styles.dentistFace}>😊</Text>
-            </View>
-            {/* Body with dental coat */}
-            <View style={styles.dentistBody}>
-              <Ionicons name="medical" size={20} color={colors.primary.main} />
-            </View>
-            {/* Dental tool */}
-            <View style={styles.dentalTool}>
-              <Text style={styles.toolEmoji}>🦷</Text>
-            </View>
-          </View>
-        </View>
-
-        <Text style={styles.title}>The Dental Angel</Text>
-        <Text style={styles.tagline}>Your friendly guide to understanding dental care</Text>
+      <View style={styles.featuresBox}>
+        <Text style={styles.featureItem}>💬 Get clear explanations of any dental procedure</Text>
+        <Text style={styles.featureItem}>📷 Upload your treatment plan for a breakdown</Text>
+        <Text style={styles.featureItem}>❓ Get the right questions to ask your dentist</Text>
+        <Text style={styles.featureItem}>🛡️ Know what to watch out for</Text>
       </View>
 
-      {/* Value Proposition */}
-      <View style={styles.valueSection}>
-        <View style={styles.valueItem}>
-          <View style={styles.valueIcon}>
-            <Ionicons name="chatbubbles" size={24} color={colors.primary.main} />
-          </View>
-          <View style={styles.valueText}>
-            <Text style={styles.valueTitle}>Ask Anything</Text>
-            <Text style={styles.valueDescription}>
-              Get clear explanations about dental procedures
-            </Text>
-          </View>
-        </View>
+      <TouchableOpacity
+        style={styles.primaryButton}
+        onPress={async () => {
+          await AsyncStorage.setItem('dental_angel_onboarded', 'true');
+          navigation.replace('MainTabs');
+        }}
+      >
+        <Text style={styles.primaryButtonText}>Get Started</Text>
+      </TouchableOpacity>
 
-        <View style={styles.valueItem}>
-          <View style={styles.valueIcon}>
-            <Ionicons name="camera" size={24} color={colors.primary.main} />
-          </View>
-          <View style={styles.valueText}>
-            <Text style={styles.valueTitle}>Upload X-Rays & Photos</Text>
-            <Text style={styles.valueDescription}>
-              Share your x-rays, photos, or treatment plans
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.valueItem}>
-          <View style={styles.valueIcon}>
-            <Ionicons name="help-circle" size={24} color={colors.primary.main} />
-          </View>
-          <View style={styles.valueText}>
-            <Text style={styles.valueTitle}>Questions to Ask</Text>
-            <Text style={styles.valueDescription}>
-              Know exactly what to discuss with your dentist
-            </Text>
-          </View>
-        </View>
+      {/* Trust indicators */}
+      <View style={styles.trustIndicators}>
+        <Text style={styles.trustItem}>🔒 Your conversations are private</Text>
+        <Text style={styles.trustItem}>📱 No account required</Text>
+        <Text style={styles.trustItem}>🌍 Works in any language</Text>
       </View>
 
-      {/* Action Button */}
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.replace('Home')}>
-          <Text style={styles.primaryButtonText}>Get Started</Text>
-          <Ionicons name="arrow-forward" size={20} color={colors.neutral.white} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Ionicons name="shield-checkmark" size={14} color={colors.neutral.darkGray} />
-        <Text style={styles.footerText}>For educational purposes only</Text>
-      </View>
-    </SafeAreaView>
+      <Text style={styles.disclaimer}>
+        "I'm going to treat you the way I'd want to be treated — like family."
+        {'\n'}— Dr. Angel
+      </Text>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.primary.lightest,
-  },
-  heroSection: {
+  welcomeContainer: {
+    flexGrow: 1,
+    backgroundColor: COLORS.neutral50,
     alignItems: 'center',
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.lg,
-  },
-  angelFigureContainer: {
-    alignItems: 'center',
-    marginBottom: spacing.md,
-    position: 'relative',
-  },
-  halo: {
-    width: 70,
-    height: 24,
-    borderRadius: 35,
-    borderWidth: 4,
-    borderColor: '#FFD700',
-    backgroundColor: 'transparent',
-    marginBottom: -12,
-    zIndex: 1,
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
-  },
-  dentistContainer: {
-    alignItems: 'center',
-    position: 'relative',
-  },
-  dentistHead: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.angel.glow,
     justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: colors.primary.light,
-    zIndex: 2,
+    paddingVertical: 60,
+    paddingHorizontal: 24,
   },
-  dentistFace: {
-    fontSize: 32,
-  },
-  dentistBody: {
-    width: 70,
-    height: 50,
-    backgroundColor: colors.neutral.white,
+  welcomeImage: {
+    width: 180,
+    height: 240,
     borderRadius: 12,
-    marginTop: -10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.primary.light,
-    ...shadows.soft,
+    marginBottom: 20,
+    borderWidth: 3,
+    borderColor: COLORS.primary200,
+    backgroundColor: COLORS.neutral200,
   },
-  dentalTool: {
-    position: 'absolute',
-    bottom: 5,
-    right: -15,
-    backgroundColor: colors.neutral.white,
-    borderRadius: 15,
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.primary.light,
-    ...shadows.soft,
-  },
-  toolEmoji: {
-    fontSize: 18,
-  },
-  title: {
-    fontSize: fontSize.title,
-    fontWeight: '700',
-    color: colors.primary.darkest,
-    marginBottom: spacing.xs,
-  },
-  tagline: {
-    fontSize: fontSize.md,
-    color: colors.neutral.darkGray,
+  welcomeTitle: {
+    fontSize: 36,
+    fontFamily: 'Inter_700Bold',
+    color: COLORS.primary700,
+    marginBottom: 8,
     textAlign: 'center',
-    paddingHorizontal: spacing.lg,
   },
-  valueSection: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+  welcomeSubtitle: {
+    fontSize: 18,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral600,
+    textAlign: 'center',
+    marginBottom: 6,
   },
-  valueItem: {
-    flexDirection: 'row',
+  welcomeCredential: {
+    fontSize: 14,
+    fontFamily: 'Inter_500Medium',
+    color: COLORS.primary500,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  featuresBox: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 30,
+    width: '100%',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  featureItem: {
+    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral700,
+    marginBottom: 12,
+    lineHeight: 24,
+  },
+  trustIndicators: {
+    marginTop: 8,
+    marginBottom: 16,
     alignItems: 'center',
-    backgroundColor: colors.neutral.white,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.sm,
-    ...shadows.soft,
   },
-  valueIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.angel.glow,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.md,
-  },
-  valueText: {
-    flex: 1,
-  },
-  valueTitle: {
-    fontSize: fontSize.md,
-    fontWeight: '600',
-    color: colors.primary.darkest,
-    marginBottom: 2,
-  },
-  valueDescription: {
-    fontSize: fontSize.sm,
-    color: colors.neutral.darkGray,
-  },
-  actionsContainer: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    gap: spacing.sm,
+  trustItem: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    color: COLORS.neutral500,
+    marginBottom: 6,
   },
   primaryButton: {
-    backgroundColor: colors.primary.main,
+    backgroundColor: COLORS.primary500,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.lg,
-    borderRadius: borderRadius.lg,
-    gap: spacing.sm,
-    ...shadows.medium,
+    gap: 10,
+    marginBottom: 16,
+    minHeight: 48,
+    ...Platform.select({
+      ios: {
+        shadowColor: COLORS.primary500,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   primaryButtonText: {
-    color: colors.neutral.white,
-    fontSize: fontSize.lg,
-    fontWeight: '600',
+    color: COLORS.white,
+    fontSize: 16,
+    fontFamily: 'Inter_600SemiBold',
   },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.md,
+  disclaimer: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    fontStyle: 'italic',
+    color: COLORS.neutral500,
+    textAlign: 'center',
     marginTop: 'auto',
-    gap: spacing.xs,
-  },
-  footerText: {
-    fontSize: fontSize.xs,
-    color: colors.neutral.darkGray,
+    paddingVertical: 16,
+    lineHeight: 20,
   },
 });
