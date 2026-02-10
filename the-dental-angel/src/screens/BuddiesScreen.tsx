@@ -245,7 +245,7 @@ function BuddyDetailView({ buddy, onClose }: BuddyDetailViewProps) {
         <View
           style={[
             styles.wouldDoAgainCard,
-            { backgroundColor: buddy.wouldDoAgain ? '#DCFCE7' : COLORS.neutral100 },
+            { backgroundColor: buddy.wouldDoAgain ? '#EEF7F0' : COLORS.neutral100 },
           ]}
         >
           <Ionicons
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionSubtitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral500,
     paddingHorizontal: 20,
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   procedureName: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
     color: COLORS.neutral800,
     textAlign: 'center',
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFF5E6',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
-    color: '#92400E',
+    color: '#7A5018',
   },
   buddyStoryPreview: {
     fontSize: 14,
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     color: COLORS.neutral800,
   },
   detailMeta: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral500,
     marginTop: 4,
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral700,
     lineHeight: 22,
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   wouldDoAgainTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
     color: COLORS.neutral800,
   },

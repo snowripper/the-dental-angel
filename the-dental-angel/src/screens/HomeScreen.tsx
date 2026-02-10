@@ -16,8 +16,8 @@ const DentalAngelImage = require('../../assets/dental-angel.jpg');
 
 /**
  * Home Screen
- * Main entry point after welcome screen
- * Shows chat, upload, and history options
+ * One clear action: Talk to Dr. Angel
+ * Simple, warm, zero hesitation
  */
 export function HomeScreen({ navigation }: HomeScreenProps) {
   return (
@@ -25,31 +25,20 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
       <View style={styles.homeHeader}>
         <Image source={DentalAngelImage} style={styles.dentalAngelImage} resizeMode="cover" />
         <Text style={styles.homeTitle}>The Dental Angel</Text>
-        <Text style={styles.homeSubtitle}>How can I help you today?</Text>
+        <Text style={styles.homeSubtitle}>I'm here to help you understand your dental care.</Text>
       </View>
 
       <View style={styles.homeActions}>
         <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate('Chat')}>
           <Ionicons name="chatbubbles" size={24} color="white" />
-          <Text style={styles.primaryButtonText}>Ask a Question</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={() => navigation.navigate('Camera')}
-        >
-          <Ionicons name="camera" size={24} color={COLORS.primary500} />
-          <Text style={styles.secondaryButtonText}>Upload X-Ray or Photo</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.historyButton}
-          onPress={() => navigation.navigate('History')}
-        >
-          <Ionicons name="time" size={24} color={COLORS.neutral500} />
-          <Text style={styles.historyButtonText}>Your Conversations</Text>
+          <Text style={styles.primaryButtonText}>Talk to Dr. Angel</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity style={styles.historyLink} onPress={() => navigation.navigate('History')}>
+        <Ionicons name="time-outline" size={18} color={COLORS.neutral500} />
+        <Text style={styles.historyLinkText}>Your past conversations</Text>
+      </TouchableOpacity>
 
       <Text style={styles.disclaimer}>
         For educational purposes only. Always consult your own dentist.
@@ -89,72 +78,51 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral500,
+    textAlign: 'center',
+    lineHeight: 24,
   },
   homeActions: {
     gap: 16,
   },
   primaryButton: {
     backgroundColor: COLORS.primary500,
-    paddingVertical: 14,
+    paddingVertical: 18,
     paddingHorizontal: 32,
-    borderRadius: 8,
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    marginBottom: 16,
-    minHeight: 48,
+    gap: 12,
+    minHeight: 56,
     ...Platform.select({
       ios: {
         shadowColor: COLORS.primary500,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
       },
       android: {
-        elevation: 3,
+        elevation: 4,
       },
     }),
   },
   primaryButtonText: {
     color: COLORS.white,
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Inter_600SemiBold',
   },
-  secondaryButton: {
-    backgroundColor: COLORS.white,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 8,
+  historyLink: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
-    borderWidth: 1.5,
-    borderColor: COLORS.primary500,
-    minHeight: 48,
+    paddingVertical: 16,
+    gap: 8,
+    marginTop: 12,
   },
-  secondaryButtonText: {
-    color: COLORS.primary500,
-    fontSize: 16,
-    fontFamily: 'Inter_600SemiBold',
-  },
-  historyButton: {
-    backgroundColor: 'transparent',
-    paddingVertical: 14,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    borderWidth: 1,
-    borderColor: COLORS.neutral300,
-    minHeight: 48,
-  },
-  historyButtonText: {
+  historyLinkText: {
     color: COLORS.neutral500,
     fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    fontFamily: 'Inter_400Regular',
   },
   disclaimer: {
     fontSize: 14,

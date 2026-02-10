@@ -53,8 +53,8 @@ export function PaywallModal({
 
   const contextMessage =
     context === 'upload'
-      ? 'To upload and analyze your treatment plan, choose a plan below.'
-      : "You've used your free preview messages. To keep chatting with Dr. Angel about YOUR dental situation, choose a plan below.";
+      ? 'Dr. Angel can break down your treatment plan in plain English. Pick the option that fits your situation.'
+      : 'Dr. Angel is ready to keep helping you understand your dental care. Pick the option that fits your situation.';
 
   return (
     <Modal
@@ -113,7 +113,7 @@ export function PaywallModal({
           {/* Full Prep — $49 (Recommended) */}
           <View style={[styles.tierCard, styles.tierCardRecommended]}>
             <View style={styles.recommendedBadge}>
-              <Text style={styles.recommendedText}>BEST VALUE</Text>
+              <Text style={styles.recommendedText}>WHAT MOST PATIENTS CHOOSE</Text>
             </View>
             <View style={styles.tierHeader}>
               <Text style={styles.tierName}>{PRICING_TIERS.full_prep.name}</Text>
@@ -217,7 +217,11 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.neutral200,
   },
   closeButton: {
-    padding: 4,
+    padding: 12,
+    minWidth: 48,
+    minHeight: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     padding: 20,
@@ -278,14 +282,14 @@ const styles = StyleSheet.create({
     top: -12,
     alignSelf: 'center',
     left: '50%',
-    marginLeft: -45,
+    marginLeft: -90,
     backgroundColor: COLORS.primary500,
     paddingHorizontal: 16,
     paddingVertical: 4,
     borderRadius: 12,
   },
   recommendedText: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Inter_700Bold',
     color: COLORS.white,
     letterSpacing: 0.5,
@@ -335,7 +339,7 @@ const styles = StyleSheet.create({
   buyButton: {
     backgroundColor: COLORS.primary500,
     paddingVertical: 16,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: 'center',
     marginTop: 16,
     minHeight: 52,
@@ -350,7 +354,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   expertNote: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral500,
     textAlign: 'center',
@@ -382,10 +386,10 @@ const styles = StyleSheet.create({
     color: COLORS.neutral700,
   },
   disclaimer: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral500,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 20,
   },
 });

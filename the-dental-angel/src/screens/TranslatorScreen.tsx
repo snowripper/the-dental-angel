@@ -320,8 +320,68 @@ export function TranslatorScreen({ navigation }: TranslatorScreenProps) {
           </View>
         )}
 
-        {/* Glossary List */}
-        {!selectedTerm && hasResults && (
+        {/* Categories FIRST — the primary way to browse */}
+        {!searchText.trim() && !selectedTerm && !selectedCategory && (
+          <View style={styles.categoriesSection}>
+            <Text style={styles.categoriesTitle}>Browse by Category</Text>
+
+            <TouchableOpacity
+              style={styles.categoryCard}
+              onPress={() => handleCategoryPress('procedures')}
+            >
+              <View style={[styles.categoryIcon, { backgroundColor: '#FBEAEA' }]}>
+                <Ionicons name="medical" size={24} color="#B84C4C" />
+              </View>
+              <View style={styles.categoryContent}>
+                <Text style={styles.categoryName}>Procedures</Text>
+                <Text style={styles.categoryCount}>Crown, Root Canal, Filling...</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.neutral400} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.categoryCard}
+              onPress={() => handleCategoryPress('conditions')}
+            >
+              <View style={[styles.categoryIcon, { backgroundColor: '#EEF7F0' }]}>
+                <Ionicons name="pulse" size={24} color="#2E7D5B" />
+              </View>
+              <View style={styles.categoryContent}>
+                <Text style={styles.categoryName}>Conditions</Text>
+                <Text style={styles.categoryCount}>Gingivitis, Abscess, Caries...</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.neutral400} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.categoryCard}
+              onPress={() => handleCategoryPress('diagnostics')}
+            >
+              <View style={[styles.categoryIcon, { backgroundColor: '#FFF5E6' }]}>
+                <Ionicons name="scan" size={24} color="#C27624" />
+              </View>
+              <View style={styles.categoryContent}>
+                <Text style={styles.categoryName}>X-rays & Diagnostics</Text>
+                <Text style={styles.categoryCount}>Bitewing, Panoramic...</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.neutral400} />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Category Header (when category is selected) */}
+        {selectedCategory && !selectedTerm && (
+          <View style={styles.categoryHeader}>
+            <TouchableOpacity onPress={clearCategory} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={20} color={COLORS.primary500} />
+              <Text style={styles.backText}>All Categories</Text>
+            </TouchableOpacity>
+            <Text style={styles.categoryHeaderTitle}>{CATEGORY_NAMES[selectedCategory]}</Text>
+          </View>
+        )}
+
+        {/* Term List — shown when searching or when a category is selected */}
+        {!selectedTerm && hasResults && (searchText.trim() || selectedCategory) && (
           <>
             <Text style={styles.sectionTitle}>
               {searchText.trim()
@@ -347,66 +407,6 @@ export function TranslatorScreen({ navigation }: TranslatorScreenProps) {
           </>
         )}
 
-        {/* Category Header (when category is selected) */}
-        {selectedCategory && !selectedTerm && (
-          <View style={styles.categoryHeader}>
-            <TouchableOpacity onPress={clearCategory} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={20} color={COLORS.primary500} />
-              <Text style={styles.backText}>All Categories</Text>
-            </TouchableOpacity>
-            <Text style={styles.categoryHeaderTitle}>{CATEGORY_NAMES[selectedCategory]}</Text>
-          </View>
-        )}
-
-        {/* Quick Categories */}
-        {!searchText.trim() && !selectedTerm && !selectedCategory && (
-          <View style={styles.categoriesSection}>
-            <Text style={styles.categoriesTitle}>Browse by Category</Text>
-
-            <TouchableOpacity
-              style={styles.categoryCard}
-              onPress={() => handleCategoryPress('procedures')}
-            >
-              <View style={[styles.categoryIcon, { backgroundColor: '#FEE2E2' }]}>
-                <Ionicons name="medical" size={24} color="#DC2626" />
-              </View>
-              <View style={styles.categoryContent}>
-                <Text style={styles.categoryName}>Procedures</Text>
-                <Text style={styles.categoryCount}>Crown, Root Canal, Filling...</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={COLORS.neutral400} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.categoryCard}
-              onPress={() => handleCategoryPress('conditions')}
-            >
-              <View style={[styles.categoryIcon, { backgroundColor: '#DCFCE7' }]}>
-                <Ionicons name="pulse" size={24} color="#16A34A" />
-              </View>
-              <View style={styles.categoryContent}>
-                <Text style={styles.categoryName}>Conditions</Text>
-                <Text style={styles.categoryCount}>Gingivitis, Abscess, Caries...</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={COLORS.neutral400} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.categoryCard}
-              onPress={() => handleCategoryPress('diagnostics')}
-            >
-              <View style={[styles.categoryIcon, { backgroundColor: '#FEF3C7' }]}>
-                <Ionicons name="scan" size={24} color="#D97706" />
-              </View>
-              <View style={styles.categoryContent}>
-                <Text style={styles.categoryName}>X-rays & Diagnostics</Text>
-                <Text style={styles.categoryCount}>Bitewing, Panoramic...</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={COLORS.neutral400} />
-            </TouchableOpacity>
-          </View>
-        )}
-
         {/* Tip */}
         <View style={styles.tipBox}>
           <Ionicons name="bulb" size={20} color={COLORS.primary500} />
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.neutral50,
   },
   searchContainer: {
-    padding: 16,
+    padding: 20,
     backgroundColor: COLORS.white,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.neutral200,
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     color: COLORS.neutral800,
   },
   scrollContent: {
-    padding: 16,
+    padding: 20,
     paddingBottom: 32,
   },
   sectionTitle: {
@@ -493,8 +493,8 @@ const styles = StyleSheet.create({
   },
   detailCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: 16,
+    padding: 24,
     marginBottom: 20,
     ...Platform.select({
       ios: {
@@ -542,7 +542,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   detailsText: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral600,
     lineHeight: 24,
@@ -554,17 +554,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: COLORS.primary500,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     gap: 8,
   },
   askMoreText: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
     color: COLORS.white,
   },
   noResultsCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 24,
     alignItems: 'center',
     marginBottom: 20,
@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary500,
     paddingVertical: 12,
     paddingHorizontal: 24,
-    borderRadius: 8,
+    borderRadius: 12,
     gap: 8,
   },
   askAngelText: {
@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.white,
-    padding: 14,
+    padding: 20,
     borderRadius: 10,
     marginBottom: 10,
     ...Platform.select({
@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryName: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
     color: COLORS.neutral800,
   },

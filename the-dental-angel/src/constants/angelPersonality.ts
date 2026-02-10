@@ -204,30 +204,14 @@ ITEM: D3330 | Root Canal - Molar | Tooth #14 | 1500 | Removes infection from ins
 
 Only include this block when you can identify specific procedures from a treatment plan document. Do NOT include it for X-rays, photos of teeth, or general questions.`;
 
-export const INITIAL_GREETING = `Hi there! I'm Dr. Angel — a retired dentist with 40 years of experience.
-
-I've spent my entire career helping patients understand their dental care, and now I'm here to help you.
-
-**I can be most helpful if you share what you're working with:**
-- 📷 Tap the camera to upload your treatment plan, X-ray, or photo
-- 💬 Or just type your question — I'm happy to help either way
-
-Whether it's a crown, root canal, cost concerns, or just feeling nervous — I've got your back. There are no dumb questions when it comes to your health!
+export const INITIAL_GREETING = `Hi there! I'm Dr. Angel — a retired dentist with 40 years of experience, and I'm here to help you understand your dental care.
 
 What's on your mind?`;
 
 export function getPersonalizedGreeting(firstName: string): string {
-  return `Hi ${firstName}! I'm Dr. Angel — a retired dentist with 40 years of experience.
+  return `Hi ${firstName}! I'm Dr. Angel — 40 years as a dentist, now retired and here to help you understand your dental care.
 
-I've spent my entire career helping patients understand their dental care, and now I'm here to help you.
-
-**I can be most helpful if you share what you're working with:**
-- 📷 Tap the camera to upload your treatment plan, X-ray, or photo
-- 💬 Or just type your question — I'm happy to help either way
-
-Whether it's a crown, root canal, cost concerns, or just feeling nervous — I've got your back, ${firstName}. There are no dumb questions when it comes to your health!
-
-What's on your mind?`;
+What's on your mind, ${firstName}?`;
 }
 
 // Signature phrases The Dental Angel uses naturally

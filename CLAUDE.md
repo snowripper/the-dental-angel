@@ -91,15 +91,13 @@ The app must ALWAYS:
 
 ## Current Status
 
-### ALL FEATURES COMPLETE
+### ALL FEATURES COMPLETE — UX OVERHAUL APPLIED (Feb 9, 2026)
 
-**App Structure (6 Tabs):**
-1. **Home** - AI Chat with The Dental Angel
-2. **Plans** - Treatment plan viewer with Second Opinion Score + Decision Trees
-3. **Translate** - Dental Dialect Translator
-4. **Videos** - Dr. Angel Video Library (26 topics)
-5. **Buddies** - Treatment Buddies Network (patient stories)
-6. **Settings** - App settings and preferences
+**App Structure (4 Tabs — simplified from 6):**
+1. **Chat** - AI Chat with The Dental Angel (core experience, goes directly to chat)
+2. **My Plan** - Treatment plan viewer with Second Opinion Score + Decision Trees
+3. **Learn** - Hub for Dental Translator, Video Library, and Treatment Buddies
+4. **Settings** - App settings and preferences
 
 **What's Working:**
 - AI Chat (OpenAI GPT-4o connected)
@@ -110,14 +108,19 @@ The app must ALWAYS:
 - Family sharing, conversation history
 - State selection with location-aware pricing
 - Pricing tiers UI with CA/non-CA Expert options
-- **Expert Review flow ($149 tier)** (NEW Feb 6)
-- **Competitive messaging on App Store & landing page** (NEW Feb 6)
-- **Welcome card — asks for name + zip code on first use** (NEW Feb 7)
-- **Personalized greetings — "What's on your mind, Susan?"** (NEW Feb 7)
-- **Zip code-based dental fee reference — 30+ procedures, regional pricing** (NEW Feb 7)
-- **International patient fee guidance — works for patients worldwide** (NEW Feb 7)
-- **Plain-English treatment scores — "Very Common" instead of "91/100"** (NEW Feb 7)
-- **Upgrade banner on chat screen — gentle "Free Preview → Unlock Full Access"** (NEW Feb 7)
+- Expert Review flow ($149 tier)
+- Competitive messaging on App Store & landing page
+- Welcome card — asks for name + zip code on first use
+- Personalized greetings — "What's on your mind, Susan?"
+- Zip code-based dental fee reference — 30+ procedures, regional pricing
+- International patient fee guidance — works for patients worldwide
+- Plain-English treatment scores — "Very Common" instead of "91/100"
+- **UX overhaul: 4-tab navigation, simplified home, trust-first copy** (NEW Feb 9)
+- **Typing indicator (animated dots) instead of loading spinner** (NEW Feb 9)
+- **Shorter 2-sentence greeting from Dr. Angel** (NEW Feb 9)
+- **Patient-centered paywall copy (no more "you've used your limit")** (NEW Feb 9)
+- **Translator: categories first, then terms** (NEW Feb 9)
+- **Plans: empty state first, no fake sample data** (NEW Feb 9)
 - All tests passing, TypeScript clean
 
 ### ALL 8 AGENT REVIEWS COMPLETE
@@ -202,11 +205,6 @@ Researched actual user reviews of competitor apps. Key findings:
 | **DentiCalc** | Outdated design, aggressive subscription popups, built for dentists not patients | Clean simple UI, transparent pricing, built for patients |
 | **Dental AI Chatbots** | "I don't understand" responses, rigid scripts, lose context | Natural conversation, remembers context, no scripts |
 
-This research was used to update:
-- App Store description (`the-dental-angel/APP_STORE_CONTENT.md`)
-- Landing page (`landing-page/index.html`) — new "Sound Familiar?" section, updated hero/features/FAQs
-- Competitive positioning throughout all marketing copy
-
 ### Expert Review Flow (Feb 6, 2026)
 | Decision | Details |
 |----------|---------|
@@ -235,10 +233,25 @@ This research was used to update:
 | **Asking for first name makes it personal** | Welcome card collects name + zip before chat starts. "What's on your mind, Susan?" feels human, not robotic |
 | **Zip code enables real fee guidance** | 30+ common procedures with regional pricing. AI says "In the LA area, a root canal typically runs $1,260–$2,660" instead of vague national averages |
 | **Scores need plain English, not numbers** | Patients don't understand "91/100". Changed to "Very Common — Most dentists would recommend this" |
-| **Pricing shouldn't hide in Settings** | Patients won't look in Settings to buy. Added gentle upgrade banner on the chat screen where they're already engaged |
 | **International patients need fee help too** | Can't give specific numbers outside US, but AI gives universal advice: get a comparison quote, ask what's included, check dental association guidelines |
 | **App Store: apply as Company/Organization** | Use LLC (not sole proprietor). Need D-U-N-S number. Apply after LLC is approved for clean setup |
 | **Supabase project may be paused** | Free tier pauses after inactivity. Will need to unpause before connecting Expert Review email system |
+
+### UX Overhaul Insights (Feb 9, 2026) — "Dr. Meridian Review"
+| Insight | What It Means |
+|---------|---------------|
+| **6 tabs was too many for older users** | Reduced to 4: Chat, My Plan, Learn, Settings. Harold can navigate this. |
+| **Home screen had decision paralysis** | 3 buttons confused first-time users. Now one button: "Talk to Dr. Angel" |
+| **Paywall opened with what patients lost** | "You've used your previews" felt punishing. Now leads with what's ahead. |
+| **"BEST VALUE" badge undermined trust** | Changed to "What most patients choose" — social proof, not marketing |
+| **Upgrade banner felt like SaaS** | "Free Preview → Unlock Full Access" replaced with "Want help with YOUR treatment plan?" |
+| **Greeting was too long** | 6 lines of text felt like a brochure. Now 2 sentences — warm and inviting |
+| **Loading spinner felt robotic** | Replaced with animated typing dots — feels like a real person composing a response |
+| **Sample treatment data confused patients** | Plans tab now shows empty state first ("Nothing here yet — and that's fine!") |
+| **Translator had inverted architecture** | Categories now show first (the way patients browse), search is secondary |
+| **13px and 12px text existed** | Fixed all text to 14px minimum — no exceptions, even for hints and disclaimers |
+| **Close button on paywall was 36px** | Increased to 48px minimum touch target — Harold's thumb can hit it |
+| **Welcome card copy was generic** | "Before I can help, I'd love to know who I'm talking to" + "Let's figure this out together" |
 
 ### Dental Fee Reference (Feb 7, 2026)
 | Detail | Info |
@@ -254,16 +267,26 @@ This research was used to update:
 
 ## Code Status
 
-- TypeScript: Clean
+- TypeScript: Clean (0 errors)
 - Tests: All 9 passing
-- Lint: 0 errors
-- Accessibility: 14px+ text, 44px+ touch targets
-- Architecture: App.tsx split, error boundaries added
-- Mobile UX: Keyboard dismiss, offline banner, optimized images
-- **State selection & pricing UI** (added Feb 3)
-- **Welcome card, personalized greetings, zip-based fee data, upgrade banner** (added Feb 7)
+- Lint: 0 errors, 23 warnings (all pre-existing, none introduced)
+- Accessibility: 14px+ text, 44px+ touch targets (verified, no exceptions)
+- Architecture: 4-tab navigation, LearnStack hub, error boundaries throughout
+- Mobile UX: Keyboard dismiss, offline banner, typing indicator, optimized images
+- **UX overhaul applied** (Feb 9) — trust-first copy, simplified navigation, accessibility fixes
 
 **Quick check:** `cd the-dental-angel && npm run typecheck && npm run lint && npm test`
+
+### New/Modified Files (Feb 9, 2026) — UX Overhaul
+- `src/screens/LearnScreen.tsx` - **NEW** — Hub screen for Translator, Videos, Buddies
+- `App.tsx` - 4-tab navigation (Chat, My Plan, Learn, Settings), LearnStackNavigator
+- `src/types/navigation.ts` - Added `LearnStackParamList`, updated tab types
+- `src/screens/ChatScreen.tsx` - Typing dots, warm welcome copy, patient-centered upgrade banner, 14px hint text
+- `src/screens/HomeScreen.tsx` - Simplified to one button: "Talk to Dr. Angel"
+- `src/screens/PlansScreen.tsx` - Empty state first (no sample data), warmer copy
+- `src/screens/TranslatorScreen.tsx` - Categories first, terms shown after category selection
+- `src/components/PaywallModal.tsx` - Trust-first copy, 48px close button, "What most patients choose" badge, 14px disclaimer
+- `src/constants/angelPersonality.ts` - 2-sentence greeting instead of 6-line wall of text
 
 ### New Files (Feb 3, 2026)
 - `src/services/userSettingsService.ts` - User location/state storage, pricing tier definitions
@@ -278,6 +301,25 @@ This research was used to update:
 - `src/screens/PlansScreen.tsx` - Plain-English scores instead of numbers
 - `src/components/SecondOpinionScore.tsx` - "Very Common" labels instead of "/100"
 - `src/components/TreatmentPlanCard.tsx` - "How common is this?" with plain-English answers
+
+---
+
+## UX Design Principles (from Dr. Meridian Review)
+
+These principles should guide ALL future design decisions:
+
+1. **Safety First** — An anxious patient must feel calmer after 5 seconds on any screen
+2. **Clarity Over Cleverness** — If a 68-year-old hesitates for one second, the design has failed
+3. **Readable By Real Eyes** — 16px body preferred, 14px minimum, never below 14px
+4. **Touchable By Real Hands** — 48px minimum, 56px preferred touch targets
+5. **Warm, Not Clinical** — "Ready when you are!" not "No data found."
+6. **Progressive Disclosure** — Answer first, details on demand
+7. **Motion With Meaning** — Typing dots, not spinners. Every animation serves a purpose.
+8. **Trust-First Monetization** — Show value first, ask for money second. No dark patterns.
+9. **Patient's Mental Model Wins** — Organize around how patients think, not how the app is built
+10. **Invisible Excellence** — If they notice the design, you've been too clever
+
+**Full UX evaluation prompt:** `docs/UX_MASTER_PERSONA.md`
 
 ---
 
@@ -302,14 +344,18 @@ This research was used to update:
 All colors centralized in `src/constants/theme.ts`. Use `import { COLORS } from '../constants/theme'`.
 
 ### Accessibility
-- Minimum text: 14px
-- Minimum touch target: 44x44px
+- Minimum text: 14px (NO EXCEPTIONS — enforced Feb 9)
+- Minimum touch target: 44x44px (preferred 48px)
 - Use `neutral500` or darker for body text
 
-### TypeScript
+### Navigation (Updated Feb 9)
+- **4 tabs:** Home (Chat), Plans (My Plan), Learn, Settings
+- **Home stack:** Chat (initial), Camera, History, HomeMain
+- **Plans stack:** PlansMain, DecisionTree
+- **Learn stack:** LearnMain (hub), Translate, Videos, Buddies
 - All screens use typed props from `src/types/navigation.ts`
 - Use `DisplayMessage` type for chat messages
-- Cross-navigator: `navigation.navigate('Home', { screen: 'History' })`
+- Cross-navigator: `navigation.navigate('Home', { screen: 'Chat' })`
 
 ### Data Storage
 Local-first (AsyncStorage). Supabase installed for future cloud backup.
@@ -330,6 +376,7 @@ For detailed guidance, see these docs:
 | `docs/MOBILE_DEVELOPMENT_GUIDE.md` | iOS/Android patterns, checklists |
 | `docs/DATA_ARCHITECTURE.md` | Local storage rationale, scaling path |
 | `docs/DEBUGGING_GUIDE.md` | Bug patterns, cleanup checklist |
+| `docs/UX_MASTER_PERSONA.md` | Full UX evaluation prompt (Dr. Meridian) |
 
 ---
 

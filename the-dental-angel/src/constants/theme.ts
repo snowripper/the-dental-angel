@@ -1,69 +1,69 @@
 /**
  * The Dental Angel - Theme Configuration
- * Updated to match IdeaRalph Design Spec v2.0
- * Calming blues with warm neutrals - designed for 45-65 year old patients
+ * Lux Healthcare Palette — muted blues, cool neutrals, calming semantics
+ * Designed for anxious patients aged 45-65+
  */
 
 export const colors = {
-  // Primary blues - calming, trustworthy (Tailwind blue scale)
+  // Primary blues — muted, trustworthy healthcare blues (NOT Tailwind)
   primary: {
-    50: '#EFF6FF', // Lightest backgrounds
-    100: '#DBEAFE', // Hover backgrounds
-    200: '#BFDBFE', // Subtle borders
-    300: '#93C5FD', // Secondary elements
-    400: '#60A5FA', // Interactive
-    500: '#3B82F6', // Primary buttons - MAIN
-    600: '#2563EB', // Hover states
-    700: '#1D4ED8', // Active states
-    // Legacy mappings for backwards compatibility
-    lightest: '#EFF6FF',
-    light: '#BFDBFE',
-    main: '#3B82F6',
-    dark: '#2563EB',
-    darkest: '#1D4ED8',
+    50: '#F5F9FD', // Lightest tint, layered surfaces
+    100: '#EBF3FA', // Page backgrounds, subtle differentiation
+    200: '#D6E8F5', // Light card backgrounds, selected states
+    300: '#5BA3D4', // Links, tertiary elements
+    400: '#2D8AC7', // Secondary emphasis, active tab indicators
+    500: '#1E6BB8', // Primary action buttons — MAIN
+    600: '#175C9E', // Hover/pressed states
+    700: '#124A80', // Active/darkest states
+    // Legacy mappings
+    lightest: '#F5F9FD',
+    light: '#D6E8F5',
+    main: '#1E6BB8',
+    dark: '#175C9E',
+    darkest: '#124A80',
   },
 
-  // Warm neutral grays (Tailwind stone scale) - NOT clinical
+  // Cool neutrals — friendly but not clinical
   neutral: {
-    50: '#FAFAF9', // Page background
-    100: '#F5F5F4', // Card backgrounds
-    200: '#E7E5E4', // Borders
-    300: '#D6D3D1', // Disabled
-    400: '#A8A29E', // Placeholder text
-    500: '#78716C', // Secondary text
-    600: '#57534E', // Body text
-    700: '#44403C', // Headings
-    800: '#292524', // Primary text
-    900: '#1C1917', // Darkest
+    50: '#F8F9FB', // Page background
+    100: '#F0F2F5', // Card backgrounds
+    200: '#E8EAF0', // Borders, separators
+    300: '#D0D3DC', // Disabled elements
+    400: '#B8BCCB', // Placeholder text, disabled states
+    500: '#7B7F95', // Tertiary text, timestamps
+    600: '#4A4E69', // Secondary text, descriptions
+    700: '#3A3D4E', // Headings
+    800: '#2D3142', // Primary text
+    900: '#1E2030', // Darkest
     // Legacy mappings
     white: '#FFFFFF',
-    offWhite: '#FAFAF9',
-    lightGray: '#E7E5E4',
-    gray: '#A8A29E',
-    darkGray: '#78716C',
-    charcoal: '#44403C',
-    black: '#292524',
+    offWhite: '#F8F9FB',
+    lightGray: '#E8EAF0',
+    gray: '#B8BCCB',
+    darkGray: '#7B7F95',
+    charcoal: '#3A3D4E',
+    black: '#2D3142',
   },
 
-  // Semantic colors
+  // Semantic colors — muted for healthcare calm
   accent: {
-    success: '#22C55E', // Green for positive feedback
-    successLight: '#DCFCE7', // Success backgrounds
-    warning: '#F59E0B', // Amber for notices
-    warningLight: '#FEF3C7', // Warning backgrounds
-    error: '#EF4444', // Red for errors (used sparingly)
-    errorLight: '#FEE2E2', // Error backgrounds
+    success: '#2E7D5B', // Muted green for positive feedback
+    successLight: '#EEF7F0', // Success backgrounds
+    warning: '#C27624', // Warm amber for notices
+    warningLight: '#FFF5E6', // Warning backgrounds
+    error: '#B84C4C', // Muted red — errors only (never for attention)
+    errorLight: '#FBEAEA', // Error backgrounds
   },
 
   // Special Dr. Angel colors
   angel: {
-    gradientStart: '#60A5FA', // Gradient start
-    gradientEnd: '#818CF8', // Gradient end (purple tint)
-    glow: 'rgba(96, 165, 250, 0.2)', // Avatar glow
-    halo: '#93C5FD', // Halo effect
+    gradientStart: '#5BA3D4', // Gradient start (muted)
+    gradientEnd: '#7C6DBF', // Gradient end (muted purple)
+    glow: 'rgba(30, 107, 184, 0.15)', // Avatar glow
+    halo: '#D6E8F5', // Halo effect
   },
 
-  // Family share colors - warm purple for "family" feel
+  // Family share colors — warm purple for "family" feel
   family: {
     primary: '#8B5CF6', // Purple
     light: '#F3E8FF',

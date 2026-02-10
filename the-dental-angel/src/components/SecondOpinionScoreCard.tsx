@@ -22,9 +22,9 @@ export function SecondOpinionScoreCard({
   // Determine color based on score
   const getScoreColor = (value: number) => {
     if (value >= 8) return { bg: COLORS.successLight, text: COLORS.success, bar: COLORS.success };
-    if (value >= 6) return { bg: '#FEF3C7', text: '#D97706', bar: '#F59E0B' }; // Amber
-    if (value >= 4) return { bg: '#FEE2E2', text: '#DC2626', bar: '#EF4444' }; // Red light
-    return { bg: '#FEE2E2', text: '#DC2626', bar: '#DC2626' }; // Red
+    if (value >= 6) return { bg: '#FFF5E6', text: '#C27624', bar: '#C27624' }; // Amber
+    if (value >= 4) return { bg: '#FBEAEA', text: '#B84C4C', bar: '#B84C4C' }; // Red light
+    return { bg: '#FBEAEA', text: '#B84C4C', bar: '#B84C4C' }; // Red
   };
 
   const colors = getScoreColor(score.score);

@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: borderRadius.card,
     borderWidth: 2,
-    borderColor: '#C084FC', // Purple accent for premium feel
+    borderColor: '#A876D0', // Purple accent for premium feel
     padding: spacing.lg,
     marginVertical: spacing.md,
     ...shadows.medium,
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    backgroundColor: '#8B5CF6', // Purple for premium
+    backgroundColor: '#7C4FBD', // Purple for premium (muted)
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: spacing.md,
     borderWidth: 2,
-    borderColor: '#C084FC',
+    borderColor: '#A876D0',
   },
   drAngelAvatarText: {
     fontSize: 24,

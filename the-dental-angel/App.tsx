@@ -28,6 +28,7 @@ import type {
   RootStackParamList,
   HomeStackParamList,
   PlansStackParamList,
+  LearnStackParamList,
   MainTabsParamList,
 } from './src/types/navigation';
 
@@ -43,6 +44,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { TranslatorScreen } from './src/screens/TranslatorScreen';
 import { DecisionTreeScreen } from './src/screens/DecisionTreeScreen';
 import { BuddiesScreen } from './src/screens/BuddiesScreen';
+import { LearnScreen } from './src/screens/LearnScreen';
 
 // Import Error Boundary for crash protection
 import { ErrorBoundary } from './src/components/ErrorBoundary';
@@ -55,6 +57,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const PlansStack = createNativeStackNavigator<PlansStackParamList>();
+const LearnStack = createNativeStackNavigator<LearnStackParamList>();
 
 // ============ LOADING SCREEN ============
 function LoadingScreen() {
@@ -145,7 +148,7 @@ function PlansStackNavigator() {
         <PlansStack.Screen
           name="PlansMain"
           component={PlansScreen}
-          options={{ title: 'Treatment Plans' }}
+          options={{ title: 'My Plan' }}
         />
         <PlansStack.Screen
           name="DecisionTree"
@@ -157,7 +160,44 @@ function PlansStackNavigator() {
   );
 }
 
-// ============ TAB NAVIGATOR ============
+// ============ LEARN STACK NAVIGATOR ============
+function LearnStackNavigator() {
+  return (
+    <ErrorBoundary fallbackTitle="Something went wrong with Learn">
+      <LearnStack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: COLORS.neutral50 },
+          headerTintColor: COLORS.primary600,
+          headerTitleStyle: { fontFamily: 'Inter_600SemiBold' },
+          contentStyle: { backgroundColor: COLORS.neutral50 },
+        }}
+      >
+        <LearnStack.Screen
+          name="LearnMain"
+          component={LearnScreen}
+          options={{ headerShown: false }}
+        />
+        <LearnStack.Screen
+          name="Translate"
+          component={TranslatorScreen}
+          options={{ title: 'Dental Translator' }}
+        />
+        <LearnStack.Screen
+          name="Videos"
+          component={VideosScreen}
+          options={{ headerShown: false }}
+        />
+        <LearnStack.Screen
+          name="Buddies"
+          component={BuddiesScreen}
+          options={{ title: 'Treatment Buddies' }}
+        />
+      </LearnStack.Navigator>
+    </ErrorBoundary>
+  );
+}
+
+// ============ TAB NAVIGATOR — 4 tabs: Chat, My Plan, Learn, Settings ============
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -168,19 +208,13 @@ function MainTabs() {
 
           switch (route.name) {
             case 'Home':
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
               break;
             case 'Plans':
               iconName = focused ? 'clipboard' : 'clipboard-outline';
               break;
-            case 'Translate':
-              iconName = focused ? 'language' : 'language-outline';
-              break;
-            case 'Videos':
-              iconName = focused ? 'play-circle' : 'play-circle-outline';
-              break;
-            case 'Buddies':
-              iconName = focused ? 'people' : 'people-outline';
+            case 'Learn':
+              iconName = focused ? 'book' : 'book-outline';
               break;
             case 'Settings':
               iconName = focused ? 'cog' : 'cog-outline';
@@ -211,7 +245,7 @@ function MainTabs() {
         },
         tabBarLabelStyle: {
           fontFamily: 'Inter_500Medium',
-          fontSize: 12,
+          fontSize: 13,
         },
         headerStyle: { backgroundColor: COLORS.neutral50 },
         headerTintColor: COLORS.primary600,
@@ -226,32 +260,13 @@ function MainTabs() {
       <Tab.Screen
         name="Plans"
         component={PlansStackNavigator}
-        options={{ title: 'Plans', headerShown: false }}
+        options={{ title: 'My Plan', headerShown: false }}
       />
       <Tab.Screen
-        name="Translate"
-        options={{ title: 'Translate', headerTitle: 'Dental Translator' }}
-      >
-        {(props) => (
-          <ErrorBoundary fallbackTitle="Something went wrong with Translate">
-            <TranslatorScreen {...props} />
-          </ErrorBoundary>
-        )}
-      </Tab.Screen>
-      <Tab.Screen name="Videos" options={{ title: 'Videos', headerShown: false }}>
-        {() => (
-          <ErrorBoundary fallbackTitle="Something went wrong with Videos">
-            <VideosScreen />
-          </ErrorBoundary>
-        )}
-      </Tab.Screen>
-      <Tab.Screen name="Buddies" options={{ title: 'Buddies', headerTitle: 'Treatment Buddies' }}>
-        {() => (
-          <ErrorBoundary fallbackTitle="Something went wrong with Buddies">
-            <BuddiesScreen />
-          </ErrorBoundary>
-        )}
-      </Tab.Screen>
+        name="Learn"
+        component={LearnStackNavigator}
+        options={{ title: 'Learn', headerShown: false }}
+      />
       <Tab.Screen name="Settings" options={{ title: 'Settings' }}>
         {(props) => (
           <ErrorBoundary fallbackTitle="Something went wrong with Settings">

@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#F5F3FF', // Light purple
+    backgroundColor: '#F3E8FF', // Light purple
     borderWidth: 1,
-    borderColor: '#DDD6FE', // Purple border
+    borderColor: '#D4CDE8', // Purple border
     borderRadius: borderRadius.card,
     padding: spacing.md,
     marginHorizontal: spacing.md,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#8B5CF6', // Purple
+    backgroundColor: '#7C4FBD', // Purple (muted)
     justifyContent: 'center',
     alignItems: 'center',
   },

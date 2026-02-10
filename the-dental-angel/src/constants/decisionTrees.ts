@@ -40,13 +40,13 @@ export function getRecommendationColor(recommendation: OutcomeData['recommendati
 } {
   switch (recommendation) {
     case 'likely-needed':
-      return { bg: '#DCFCE7', text: '#166534', border: '#22C55E' };
+      return { bg: '#EEF7F0', text: '#1B5E3F', border: '#2E7D5B' };
     case 'worth-discussing':
-      return { bg: '#FEF3C7', text: '#92400E', border: '#F59E0B' };
+      return { bg: '#FFF5E6', text: '#7A5018', border: '#C27624' };
     case 'may-not-need':
-      return { bg: '#DBEAFE', text: '#1E40AF', border: '#3B82F6' };
+      return { bg: '#EBF3FA', text: '#124A80', border: '#1E6BB8' };
     case 'get-second-opinion':
-      return { bg: '#FEE2E2', text: '#991B1B', border: '#EF4444' };
+      return { bg: '#FBEAEA', text: '#7A2E2E', border: '#B84C4C' };
   }
 }
 

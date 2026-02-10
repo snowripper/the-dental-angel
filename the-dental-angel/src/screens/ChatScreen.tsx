@@ -11,7 +11,7 @@ import {
   Platform,
   Image,
   Alert,
-  ActivityIndicator,
+  Animated,
   ListRenderItemInfo,
   ScrollView,
   Modal,
@@ -34,6 +34,63 @@ import { expertReviewService, type ExpertReview } from '../services/expertReview
 import { userSettingsService } from '../services/userSettingsService';
 import type { ChatScreenProps } from '../types/navigation';
 import type { DisplayMessage } from '../types/chat';
+
+/**
+ * Typing indicator — three animated dots that pulse sequentially
+ * Creates the feeling of a real person composing a response
+ */
+function TypingDots() {
+  const dot1 = useRef(new Animated.Value(0.3)).current;
+  const dot2 = useRef(new Animated.Value(0.3)).current;
+  const dot3 = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    const animate = (dot: Animated.Value, delay: number) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(dot, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.timing(dot, { toValue: 0.3, duration: 400, useNativeDriver: true }),
+        ])
+      );
+
+    const a1 = animate(dot1, 0);
+    const a2 = animate(dot2, 200);
+    const a3 = animate(dot3, 400);
+    a1.start();
+    a2.start();
+    a3.start();
+
+    return () => {
+      a1.stop();
+      a2.stop();
+      a3.stop();
+    };
+  }, [dot1, dot2, dot3]);
+
+  return (
+    <View style={typingStyles.container}>
+      {[dot1, dot2, dot3].map((dot, i) => (
+        <Animated.View key={i} style={[typingStyles.dot, { opacity: dot }]} />
+      ))}
+    </View>
+  );
+}
+
+const typingStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingVertical: 4,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#7B7F95',
+  },
+});
 
 /**
  * Chat Screen
@@ -340,8 +397,8 @@ export function ChatScreen({ navigation, route }: ChatScreenProps) {
               <Text style={styles.welcomeEmoji}>🦷</Text>
               <Text style={styles.welcomeTitle}>Welcome to The Dental Angel!</Text>
               <Text style={styles.welcomeSubtitle}>
-                I'm Dr. Angel — a retired dentist with 40 years of experience. Before we start, let
-                me get to know you a little.
+                I'm Dr. Angel — a retired dentist with 40 years of experience. Before I can help,
+                I'd love to know who I'm talking to.
               </Text>
 
               <View style={styles.welcomeInputGroup}>
@@ -383,7 +440,7 @@ export function ChatScreen({ navigation, route }: ChatScreenProps) {
                 disabled={!welcomeName.trim()}
                 activeOpacity={0.8}
               >
-                <Text style={styles.welcomeButtonText}>Let's Get Started!</Text>
+                <Text style={styles.welcomeButtonText}>Let's figure this out together</Text>
                 <Ionicons name="arrow-forward" size={20} color={COLORS.white} />
               </TouchableOpacity>
             </View>
@@ -405,9 +462,9 @@ export function ChatScreen({ navigation, route }: ChatScreenProps) {
               activeOpacity={0.8}
             >
               <View style={styles.upgradeBannerContent}>
-                <Ionicons name="sparkles" size={18} color={COLORS.primary600} />
-                <Text style={styles.upgradeBannerText}>Free Preview</Text>
-                <Text style={styles.upgradeBannerCta}>Unlock Full Access</Text>
+                <Ionicons name="heart-outline" size={18} color={COLORS.primary600} />
+                <Text style={styles.upgradeBannerText}>Want help with YOUR treatment plan?</Text>
+                <Text style={styles.upgradeBannerCta}>See options</Text>
                 <Ionicons name="chevron-forward" size={16} color={COLORS.primary500} />
               </View>
             </TouchableOpacity>
@@ -537,8 +594,7 @@ export function ChatScreen({ navigation, route }: ChatScreenProps) {
                 <Text style={styles.chatAngelEmoji}>🦷</Text>
               </View>
               <View style={styles.loadingBubble}>
-                <ActivityIndicator size="small" color={COLORS.primary500} />
-                <Text style={styles.loadingText}>Dr. Angel is thinking...</Text>
+                <TypingDots />
               </View>
             </View>
           )}
@@ -548,7 +604,7 @@ export function ChatScreen({ navigation, route }: ChatScreenProps) {
               style={styles.cameraIconButton}
               onPress={() => navigation.navigate('Camera')}
             >
-              <Ionicons name="camera" size={24} color={COLORS.primary500} />
+              <Ionicons name="camera" size={24} color={COLORS.primary600} />
             </TouchableOpacity>
             <TextInput
               style={styles.textInput}
@@ -631,21 +687,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
-    borderWidth: 2,
-    borderColor: COLORS.primary200,
+    borderWidth: 1.5,
+    borderColor: '#D6E8F5',
   },
   chatAngelEmoji: {
     fontSize: 18,
   },
   messageContent: {
     maxWidth: '75%',
-    padding: 12,
+    padding: 14,
     paddingHorizontal: 16,
   },
   aiContent: {
     backgroundColor: COLORS.white,
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
+    borderRadius: 18,
+    borderBottomLeftRadius: 6,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -660,8 +716,8 @@ const styles = StyleSheet.create({
   },
   userContent: {
     backgroundColor: COLORS.primary500,
-    borderRadius: 16,
-    borderBottomRightRadius: 4,
+    borderRadius: 18,
+    borderBottomRightRadius: 6,
     marginLeft: 'auto',
   },
   messageText: {
@@ -693,15 +749,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.white,
-    padding: 12,
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
-    gap: 8,
-  },
-  loadingText: {
-    color: COLORS.neutral500,
-    fontFamily: 'Inter_400Regular',
-    fontStyle: 'italic',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 18,
+    borderBottomLeftRadius: 6,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -723,7 +774,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     backgroundColor: COLORS.neutral100,
-    borderRadius: 8,
+    borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
@@ -742,7 +793,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   sendButtonDisabled: {
-    backgroundColor: COLORS.primary300,
+    opacity: 0.4,
   },
   chatDisclaimer: {
     fontSize: 14,
@@ -767,8 +818,8 @@ const styles = StyleSheet.create({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
       },
       android: {
         elevation: 6,
@@ -787,11 +838,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   welcomeSubtitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral500,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 24,
     marginBottom: 24,
   },
   welcomeInputGroup: {
@@ -799,7 +850,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   welcomeLabel: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
     color: COLORS.neutral700,
     marginBottom: 8,
@@ -811,7 +862,7 @@ const styles = StyleSheet.create({
   },
   welcomeInput: {
     backgroundColor: COLORS.neutral100,
-    borderRadius: 10,
+    borderRadius: 10, // Input radius per Lux spec
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 17,
@@ -821,11 +872,11 @@ const styles = StyleSheet.create({
     borderColor: COLORS.neutral200,
   },
   welcomeHint: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral400,
     marginTop: 6,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   welcomeButton: {
     flexDirection: 'row',

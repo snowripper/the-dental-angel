@@ -63,7 +63,7 @@ export function SecondOpinionScore({
             cx={config.diameter / 2}
             cy={config.diameter / 2}
             r={radius}
-            stroke="#E7E5E4"
+            stroke="#E8EAF0"
             strokeWidth={config.strokeWidth}
             fill="transparent"
           />

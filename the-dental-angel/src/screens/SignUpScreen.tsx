@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEE2E2',
+    backgroundColor: '#FBEAEA',
     padding: spacing.sm,
     borderRadius: borderRadius.md,
     marginBottom: spacing.md,
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E0F2FE',
+    backgroundColor: '#EBF3FA',
     padding: spacing.sm,
     borderRadius: borderRadius.md,
     marginBottom: spacing.md,

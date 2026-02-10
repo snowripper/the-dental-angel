@@ -49,14 +49,22 @@ export type PlansStackParamList = {
 };
 
 /**
- * Main Tab Navigator
+ * Learn Stack - Educational resources hub
+ */
+export type LearnStackParamList = {
+  LearnMain: undefined;
+  Translate: undefined;
+  Videos: undefined;
+  Buddies: undefined;
+};
+
+/**
+ * Main Tab Navigator — 4 tabs: Chat, My Plan, Learn, Settings
  */
 export type MainTabsParamList = {
   Home: NavigatorScreenParams<HomeStackParamList> | undefined;
   Plans: NavigatorScreenParams<PlansStackParamList> | undefined;
-  Translate: undefined;
-  Videos: undefined;
-  Buddies: undefined;
+  Learn: NavigatorScreenParams<LearnStackParamList> | undefined;
   Settings: undefined;
 };
 
@@ -116,19 +124,22 @@ export type DecisionTreeScreenProps = CompositeScreenProps<
 >;
 
 /**
- * Translator Screen
+ * Translator Screen — now inside Learn stack
  */
-export type TranslatorScreenProps = BottomTabScreenProps<MainTabsParamList, 'Translate'>;
+export type TranslatorScreenProps = CompositeScreenProps<
+  NativeStackScreenProps<LearnStackParamList, 'Translate'>,
+  BottomTabScreenProps<MainTabsParamList>
+>;
 
 /**
- * Videos Screen
+ * Videos Screen — now inside Learn stack
  */
-export type VideosScreenProps = BottomTabScreenProps<MainTabsParamList, 'Videos'>;
+export type VideosScreenProps = NativeStackScreenProps<LearnStackParamList, 'Videos'>;
 
 /**
- * Buddies Screen
+ * Buddies Screen — now inside Learn stack
  */
-export type BuddiesScreenProps = BottomTabScreenProps<MainTabsParamList, 'Buddies'>;
+export type BuddiesScreenProps = NativeStackScreenProps<LearnStackParamList, 'Buddies'>;
 
 /**
  * Settings Screen

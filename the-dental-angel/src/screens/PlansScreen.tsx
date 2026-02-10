@@ -13,56 +13,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { TreatmentPlanCard, TreatmentItem } from '../components/TreatmentPlanCard';
 import { SecondOpinionScore } from '../components/SecondOpinionScore';
 import { shareService } from '../services/shareService';
-import {
-  getAllTreatmentPlans,
-  deleteTreatmentPlan,
-  SavedTreatmentPlan,
-} from '../services/treatmentPlanService';
+import { getAllTreatmentPlans } from '../services/treatmentPlanService';
 import { COLORS } from '../constants/theme';
 import type { PlansScreenProps } from '../types/navigation';
 
-// Sample treatment data (will be replaced with real data from AI analysis)
-const SAMPLE_TREATMENTS: TreatmentItem[] = [
-  {
-    id: '1',
-    code: 'D2740',
-    name: 'Crown - Porcelain/Ceramic',
-    tooth: 'Tooth #14',
-    cost: 1200,
-    score: 85,
-    explanation:
-      'A crown is like a protective helmet for your tooth. It covers and strengthens a tooth that has been damaged or weakened.',
-  },
-  {
-    id: '2',
-    code: 'D3330',
-    name: 'Root Canal - Molar',
-    tooth: 'Tooth #14',
-    cost: 1500,
-    score: 92,
-    explanation:
-      'A root canal removes infected tissue from inside your tooth. Despite its reputation, modern root canals are no more uncomfortable than getting a filling.',
-  },
-  {
-    id: '3',
-    code: 'D0274',
-    name: 'Bitewing X-rays (4 films)',
-    cost: 65,
-    score: 95,
-    explanation:
-      'These X-rays help your dentist see between your teeth where cavities often hide. A standard part of routine checkups.',
-  },
-];
-
 export function PlansScreen({ navigation }: PlansScreenProps) {
-  const [savedPlans, setSavedPlans] = React.useState<SavedTreatmentPlan[]>([]);
   const [userTreatments, setUserTreatments] = React.useState<TreatmentItem[]>([]);
 
   // Reload saved plans every time this tab comes into focus
   useFocusEffect(
     useCallback(() => {
       getAllTreatmentPlans().then((plans) => {
-        setSavedPlans(plans);
         // Combine all treatments from all saved plans
         const allTreatments = plans.flatMap((plan) => plan.treatments);
         setUserTreatments(allTreatments);
@@ -70,9 +31,9 @@ export function PlansScreen({ navigation }: PlansScreenProps) {
     }, [])
   );
 
-  // Use user's treatments if available, otherwise show examples
-  const treatments = userTreatments.length > 0 ? userTreatments : SAMPLE_TREATMENTS;
-  const isShowingExamples = userTreatments.length === 0;
+  // Only show real treatments — no sample data
+  const treatments = userTreatments;
+  const isShowingExamples = false;
 
   // Calculate totals
   const totalCost = treatments.reduce((sum, t) => sum + t.cost, 0);
@@ -140,7 +101,7 @@ ${shareService.getDownloadLink()}`;
           <View style={styles.emptyIconContainer}>
             <Ionicons name="document-text-outline" size={60} color={COLORS.primary500} />
           </View>
-          <Text style={styles.emptyTitle}>No Treatment Plans Yet</Text>
+          <Text style={styles.emptyTitle}>Nothing here yet — and that's fine!</Text>
           <Text style={styles.emptySubtitle}>
             Got a treatment plan from your dentist? Take a photo and I'll break down every item in
             plain English — so you know exactly what's being recommended and why.
@@ -174,7 +135,7 @@ ${shareService.getDownloadLink()}`;
         {/* Example Banner - Only show when viewing examples */}
         {isShowingExamples && (
           <View style={styles.exampleBanner}>
-            <Ionicons name="information-circle" size={20} color="#D97706" />
+            <Ionicons name="information-circle" size={20} color="#C27624" />
             <Text style={styles.exampleBannerText}>
               This is a <Text style={styles.exampleBannerBold}>sample treatment plan</Text> so you
               can see how I break things down. Upload your own plan above and I'll explain every
@@ -292,7 +253,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.neutral50,
   },
   scrollContent: {
-    padding: 16,
+    padding: 20,
   },
   // Upload CTA - prominent at top
   uploadCTA: {
@@ -304,9 +265,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.primary500,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.12,
         shadowRadius: 8,
       },
       android: {
@@ -341,19 +302,19 @@ const styles = StyleSheet.create({
   exampleBanner: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFF5E6',
     borderRadius: 10,
     padding: 12,
     marginBottom: 16,
     gap: 10,
     borderWidth: 1,
-    borderColor: '#FCD34D',
+    borderColor: '#E5A83A',
   },
   exampleBannerText: {
     flex: 1,
     fontSize: 14,
     fontFamily: 'Inter_400Regular',
-    color: '#92400E',
+    color: '#7A5018',
     lineHeight: 20,
   },
   exampleBannerBold: {
@@ -362,28 +323,28 @@ const styles = StyleSheet.create({
   // Example card styling
   exampleCard: {
     borderWidth: 2,
-    borderColor: '#FCD34D',
+    borderColor: '#E5A83A',
     borderStyle: 'dashed',
   },
   exampleTag: {
     position: 'absolute',
     top: -10,
     left: 16,
-    backgroundColor: '#F59E0B',
+    backgroundColor: '#C27624',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 4,
   },
   exampleTagText: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Inter_700Bold',
     color: COLORS.white,
     letterSpacing: 0.5,
   },
   summaryCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 20,
     marginBottom: 24,
     ...Platform.select({
       ios: {
@@ -446,8 +407,8 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 20,
     marginTop: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -530,7 +491,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: COLORS.white,
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: 12,
     marginTop: 16,
     borderWidth: 1.5,
     borderColor: COLORS.primary500,
@@ -585,7 +546,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary500,
     paddingVertical: 14,
     paddingHorizontal: 24,
-    borderRadius: 8,
+    borderRadius: 12,
     gap: 10,
   },
   uploadButtonText: {

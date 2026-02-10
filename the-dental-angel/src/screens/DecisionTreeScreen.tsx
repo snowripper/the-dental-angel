@@ -20,20 +20,20 @@ import {
   type DecisionNode,
 } from '../constants/decisionTrees';
 
-// Design System Colors
+// Design System Colors — Lux Healthcare Palette
 const COLORS = {
-  primary50: '#EFF6FF',
-  primary100: '#DBEAFE',
-  primary500: '#3B82F6',
-  primary600: '#2563EB',
-  neutral50: '#FAFAF9',
-  neutral100: '#F5F5F4',
-  neutral200: '#E7E5E4',
-  neutral400: '#A8A29E',
-  neutral500: '#78716C',
-  neutral600: '#57534E',
-  neutral700: '#44403C',
-  neutral800: '#292524',
+  primary50: '#F5F9FD',
+  primary100: '#EBF3FA',
+  primary500: '#1E6BB8',
+  primary600: '#175C9E',
+  neutral50: '#F8F9FB',
+  neutral100: '#F0F2F5',
+  neutral200: '#E8EAF0',
+  neutral400: '#B8BCCB',
+  neutral500: '#7B7F95',
+  neutral600: '#4A4E69',
+  neutral700: '#3A3D4E',
+  neutral800: '#2D3142',
   white: '#FFFFFF',
 };
 
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     lineHeight: 30,
   },
   questionSubtext: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral500,
     textAlign: 'center',
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
   },
   questionItemText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
     color: COLORS.neutral700,
     lineHeight: 22,
