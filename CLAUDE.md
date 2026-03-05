@@ -142,17 +142,17 @@ See `docs/AGENT_REVIEW_SUMMARIES.md` for full details.
 
 ## NEXT ACTIONS
 
-**BUSINESS FORMATION (in progress Feb 7, 2026):**
+**BUSINESS FORMATION:**
 1. **EIN** — Done
-2. **California LLC** — Applied, waiting for state approval
-3. **Open business checking account** — After LLC is approved
-4. **Apple Developer ($99/year)** — Apply as Company/Organization after LLC approved. Will need D-U-N-S number (free, Apple walks you through it).
-5. **Google Play Developer ($25 one-time)** — Apply anytime
+2. **California LLC** — Done (approved as **"Angel App LLC"**)
+3. **File DBA** — Done ("The Dental Angel" filed with county clerk)
+4. **Update EIN name with IRS** — Done (letter sent to change from "The Dental Angel LLC" to "Angel App LLC")
+5. **Business checking account** — Done (Mercury Bank, activated)
+6. **Apple Developer ($99/year)** — Paid, waiting for D-U-N-S number to complete enrollment (requested 2/27/26)
+7. **Google Play Developer ($25 one-time)** — Waiting for D-U-N-S number
+8. **Set up Stripe** — Ready now (Mercury active), do at [stripe.com](https://stripe.com)
 
-**AFTER BUSINESS ACCOUNT + DEVELOPER ACCOUNTS READY:**
-6. **Set up Stripe**
-   - Connect to business bank account
-   - Configure for one-time payments
+**AFTER STRIPE + DEVELOPER ACCOUNTS READY:**
 
 7. **Connect Payment System in App**
    - Replace simulated purchases in paymentService.ts with real Stripe/IAP
@@ -193,7 +193,7 @@ See `docs/AGENT_REVIEW_SUMMARIES.md` for full details.
 | **Education can be provided anywhere** | No licensing restrictions for educational content |
 | **One Expert tier for everyone** | $149 Expert Review is educational, available worldwide |
 | **Simpler is better** | Single pricing structure, no location-based complexity |
-| **LLC before payments** | Form "The Dental Angel LLC" → EIN → Business bank account → Stripe |
+| **LLC before payments** | Form LLC (approved as "Angel App LLC") → Update EIN → DBA for "The Dental Angel" → Business bank account → Stripe |
 
 ### Competitor Review Research (Feb 6, 2026)
 Researched actual user reviews of competitor apps. Key findings:
