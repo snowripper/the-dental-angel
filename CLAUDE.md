@@ -149,8 +149,8 @@ See `docs/AGENT_REVIEW_SUMMARIES.md` for full details.
 4. **Update EIN name with IRS** — Done (letter sent to change from "The Dental Angel LLC" to "Angel App LLC")
 5. **Business checking account** — Done (Mercury Bank, activated)
 6. **Apple Developer ($99/year)** — Paid, waiting for D-U-N-S number to complete enrollment (requested 2/27/26)
-7. **Google Play Developer ($25 one-time)** — Waiting for D-U-N-S number
-8. **Set up Stripe** — Ready now (Mercury active), do at [stripe.com](https://stripe.com)
+7. **Google Play Developer ($25 one-time)** — Done
+8. **Set up Stripe** — Done (account created, connected to Mercury)
 
 **AFTER STRIPE + DEVELOPER ACCOUNTS READY:**
 

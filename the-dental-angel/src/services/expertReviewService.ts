@@ -12,6 +12,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { sendEmail, isEmailConfigured } from './emailService';
 
 const STORAGE_KEY = 'dental_angel_expert_reviews';
 
@@ -64,12 +65,12 @@ function buildConversationSummary(messages: Array<{ role: string; content: strin
 }
 
 /**
- * Format the email body that will be sent to Dr. Angel
+ * Format a clean HTML email for Dr. Angel with all the review details.
  */
 function formatEmailForDrAngel(review: ExpertReview): {
   to: string;
   subject: string;
-  body: string;
+  html: string;
 } {
   const requestDate = new Date(review.requestedAt).toLocaleString('en-US', {
     weekday: 'long',
@@ -92,30 +93,51 @@ function formatEmailForDrAngel(review: ExpertReview): {
     timeZoneName: 'short',
   });
 
+  const escapedSummary = review.patientSummary
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+  const escapedContext = review.aiConversationSummary
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #2D3142;">
+  <div style="background: #F5F9FD; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+    <h1 style="color: #1E6BB8; margin: 0 0 4px 0; font-size: 22px;">New Expert Review Request</h1>
+    <p style="color: #7B7F95; margin: 0; font-size: 14px;">Review #${review.id.slice(-6).toUpperCase()}</p>
+  </div>
+
+  <div style="background: #FFF5E6; border-left: 4px solid #C27624; padding: 12px 16px; margin-bottom: 24px; border-radius: 0 8px 8px 0;">
+    <strong style="color: #C27624;">Please respond by:</strong>
+    <span style="color: #2D3142;"> ${deadlineDate}</span>
+  </div>
+
+  <p style="color: #7B7F95; font-size: 14px; margin-bottom: 4px;">Requested on ${requestDate}</p>
+
+  <h2 style="color: #2D3142; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #E8EAF0; padding-bottom: 8px;">Patient's Situation</h2>
+  <div style="background: #F8F9FB; border-radius: 8px; padding: 16px; line-height: 1.6;">${escapedSummary}</div>
+
+  <h2 style="color: #2D3142; font-size: 18px; margin-top: 24px; border-bottom: 1px solid #E8EAF0; padding-bottom: 8px;">AI Conversation Context</h2>
+  <div style="background: #F8F9FB; border-radius: 8px; padding: 16px; line-height: 1.6; font-size: 14px;">${escapedContext}</div>
+
+  ${review.treatmentPlanImageUri ? '<p style="background: #EEF7F0; color: #2E7D5B; padding: 12px 16px; border-radius: 8px; margin-top: 16px;">📷 Patient uploaded a treatment plan image (available in the app).</p>' : ''}
+
+  <div style="margin-top: 32px; padding-top: 16px; border-top: 2px solid #E8EAF0; text-align: center; color: #7B7F95; font-size: 13px;">
+    <p>Reply to this email with your educational review, or use the review dashboard.</p>
+    <p style="margin-top: 8px;">🦷 The Dental Angel</p>
+  </div>
+</body>
+</html>`;
+
   return {
     to: DR_ANGEL_EMAIL,
     subject: `New Expert Review Request — #${review.id.slice(-6).toUpperCase()}`,
-    body: `NEW EXPERT REVIEW REQUEST
-================================
-
-Review ID: ${review.id}
-Requested: ${requestDate}
-Please respond by: ${deadlineDate}
-
-PATIENT'S SITUATION:
-${review.patientSummary}
-
-CONVERSATION CONTEXT:
-${review.aiConversationSummary}
-
-${review.treatmentPlanImageUri ? 'NOTE: Patient uploaded a treatment plan image (available in the app).' : ''}
-
-================================
-To respond, open the review page:
-[Response link will be available when Supabase is configured]
-
-Or reply to this email with your educational review.
-================================`,
+    html,
   };
 }
 
@@ -181,24 +203,24 @@ export const expertReviewService = {
 
   /**
    * Send email notification to Dr. Angel about a new review request.
-   *
-   * TODO: Replace with real email sending when Supabase Edge Functions
-   * or an email API (SendGrid/Resend) is configured.
-   * For now, prepares the email content and logs it.
+   * Uses Resend API when configured, falls back to console logging.
    */
   async sendNotification(review: ExpertReview): Promise<void> {
     const email = formatEmailForDrAngel(review);
 
-    // In production, this would send a real email via:
-    // - Supabase Edge Function calling SendGrid/Resend
-    // - Or a direct API call to an email service
-    console.log('=== EXPERT REVIEW NOTIFICATION ===');
-    console.log(`To: ${email.to}`);
-    console.log(`Subject: ${email.subject}`);
-    console.log(email.body);
-    console.log('=================================');
+    const sent = await sendEmail({
+      to: email.to,
+      subject: email.subject,
+      html: email.html,
+    });
 
-    // Mark as in_review once notification is sent
+    if (sent) {
+      console.log(`[ExpertReview] Email sent to ${email.to} for review ${review.id}`);
+    } else if (!isEmailConfigured()) {
+      console.log('[ExpertReview] Email service not configured — review saved locally only');
+    }
+
+    // Mark as in_review once notification is processed
     review.status = 'in_review';
     await localStore.save(review);
   },
